@@ -1,0 +1,6 @@
+# Ignore test_files since they are too big for GitHub
+test_files/
+
+# Ignore logs/ and frames/ since they are created based on input
+logs/
+frames/
