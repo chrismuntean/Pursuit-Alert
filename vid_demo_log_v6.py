@@ -313,13 +313,13 @@ def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
             # then log the same data into a json file in the root log folder
             if not os.path.exists("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json"):
                 f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json", "w")
-                f.write("{\n\t\"plates\": [\n\t\t{\n\t\t\t\"plate\": \"" + characters + "\",\n\t\t\t\"confidence\": \"" + confidence + "\",\n\t\t\t\"timestamp\": \"" + str(time.time()) + "\"\n\t\t}\n\t]\n}")
+                f.write("{\n\t\"plates\": [\n\t\t{\n\t\t\t\"plate\": \"" + characters + "\",\n\t\t\t\"confidence\": \"" + confidence + "\"\n\t\t}\n\t]\n}")
                 f.close()
             else:
                 f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json", "r")
                 data = f.read()
                 f.close()
-                data = data.replace("]", ",\n\t\t{\n\t\t\t\"plate\": \"" + characters + "\",\n\t\t\t\"confidence\": \"" + confidence + "\",\n\t\t\t\"timestamp\": \"" + str(time.time()) + "\"\n\t\t}\n\t]")
+                data = data.replace("]", ",\n\t\t{\n\t\t\t\"plate\": \"" + characters + "\",\n\t\t\t\"confidence\": \"" + confidence + "\"\n\t\t}\n\t]")
                 f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json", "w")
                 f.write(data)
                 f.close()
@@ -385,6 +385,10 @@ def detect_vehicles(frame, stream):
 
     # create a list with all of the veh ids
     all_veh_ids = [int(veh[4]) for veh in veh_results[0].boxes.data]
+
+    # print the veh ids to the console
+    print("\nTarget Vehicle IDs: " + str(target_vehicles))
+    print("Active Vehicle IDs: " + str(all_veh_ids))
 
     # loop through the target vehicles
     for veh_id in target_vehicles:
@@ -509,9 +513,6 @@ while True:
     # if the frame is empty (the video is over), break the loop
     if not ret:
         break
-
-    # print the target vehicles
-    print("\nTarget Vehicle IDs: " + str(target_vehicles))
 
     # start the ALPR process
     # detect_vehicles() -> detect_plate() -> detect_chars()
