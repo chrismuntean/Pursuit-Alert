@@ -475,9 +475,9 @@ def detect_vehicles(frame, stream):
 # start by clearing the logs
 clear_logs()
 
-############################
+###################################
 ### DO NOT EDIT ABOVE THIS LINE ###
-#### CONFIGURATION  VARIABLES ####
+#### CONFIGURATION  VARIABLES #####
 
 # get the video file path
 stream_path = 'test_files/test_vids/test_vid_7_(4k).mov'
@@ -485,9 +485,9 @@ stream_path = 'test_files/test_vids/test_vid_7_(4k).mov'
 frame_skip = 10 # maxes out at the fps of original video/ camera stream
 # frame_skip = 0 # no frame skipping
 
-#### CONFIGURATION  VARIABLES ####
+#### CONFIGURATION  VARIABLES #####
 ### DO NOT EDIT BELOW THIS LINE ###
-############################
+###################################
 
 # create a video capture object from video stream
 stream = cv2.VideoCapture(stream_path)
