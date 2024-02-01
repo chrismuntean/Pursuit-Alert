@@ -97,6 +97,7 @@ def create_perm_log(veh_id, vid, write_fps):
     # Load plate strings and vehicle tracking data from JSON files if they exist
     with open(f"logs/tmp/Vehicle_{veh_id}/plates.json", "r") as file:
         plate_strings = json.load(file)
+        plate_strings = plate_strings['plates']
     
     if os.path.exists("logs/tmp/Vehicle_" + str(veh_id) + "/vehicle_track.json"):
         with open(f"logs/tmp/Vehicle_{veh_id}/vehicle_track.json", "r") as file:
@@ -113,7 +114,7 @@ def create_perm_log(veh_id, vid, write_fps):
         plate_data_found = False
         
     # Apply the temporal redundancy voting algorithm
-    voted_plate = temporal_redundancy_voting(plate_strings['plates'])
+    voted_plate = temporal_redundancy_voting(plate_strings)
 
     # Create permanent log directory
     perm_path = f"logs/perm/{voted_plate}"
@@ -401,6 +402,11 @@ def detect_vehicles(frame, stream):
             veh_id = 0
         else:
             veh_id = int(veh_results[0][index].boxes.id)
+
+        # if the veh id is 0, skip the current loop iteration
+        # this is because the veh id is 0 when there's not enough frames to track the veh yet
+        if veh_id == 0:
+            continue
 
         # get the coordinates of the bounding box
         x1, y1, x2, y2 = int(veh_plot[0]), int(veh_plot[1]), int(veh_plot[2]), int(veh_plot[3])
