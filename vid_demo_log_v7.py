@@ -253,7 +253,9 @@ def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
         plate_strings = json.load(open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json"))
 
         # extract the plates from the JSON data
-        plates = plate_strings['plates']
+        plates = [entry["plate"] for entry in plate_strings]
+
+        print(plates)
 
         # get the number of plates detected
         num_plates = len(plates)
