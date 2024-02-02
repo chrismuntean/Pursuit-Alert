@@ -62,6 +62,8 @@ def temporal_redundancy_voting(plates):
     # Extracting plate strings
     plate_strings = [plate['plate'] for plate in plates]
 
+    print(plate_strings)
+
     # Determine the maximum length of the plates
     max_length = max(len(plate) for plate in plate_strings)
 
@@ -209,7 +211,7 @@ def create_perm_log(veh_id, vid, write_fps):
     out.release()
 
     # delete the tmp folder for the vehicle 
-    os.system("rm -rf logs/tmp/Vehicle_" + str(veh_id))
+    # REMOVED FOR DEV ONLY os.system("rm -rf logs/tmp/Vehicle_" + str(veh_id))
 
 #_# ALPR functions #_#
 def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):

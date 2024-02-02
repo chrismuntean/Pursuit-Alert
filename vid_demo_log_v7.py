@@ -57,10 +57,7 @@ def create_dev_vid(stream, write_fps):
     return out
 #^# FOR DEVELOPMENT ONLY #^#
 
-def temporal_redundancy_voting(plates):
-    
-    # Extracting plate strings
-    plate_strings = [plate['plate'] for plate in plates]
+def temporal_redundancy_voting(plate_strings):
 
     # Determine the maximum length of the plates
     max_length = max(len(plate) for plate in plate_strings)
@@ -97,7 +94,7 @@ def create_perm_log(veh_id, vid, write_fps):
     # Load plate strings and vehicle tracking data from JSON files if they exist
     with open(f"logs/tmp/Vehicle_{veh_id}/plates.json", "r") as file:
         plate_strings = json.load(file)
-        plate_strings = plate_strings['plates']
+        plate_strings = [entry["plate"] for entry in plate_strings]
     
     if os.path.exists("logs/tmp/Vehicle_" + str(veh_id) + "/vehicle_track.json"):
         with open(f"logs/tmp/Vehicle_{veh_id}/vehicle_track.json", "r") as file:
@@ -254,8 +251,6 @@ def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
 
         # extract the plates from the JSON data
         plates = [entry["plate"] for entry in plate_strings]
-
-        print(plates)
 
         # get the number of plates detected
         num_plates = len(plates)
