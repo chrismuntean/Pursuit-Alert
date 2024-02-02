@@ -357,20 +357,37 @@ def detect_plate(veh_crop, veh_plot, veh_id, stream):
 
         # if the vehicle id is in the target list create a json file under the vehicle's tmp folder called "plate_track.json" and write the frame number and coordinates to it
         if veh_id in target_vehicles:
-            # if the json file does not exist, create it and add the frame number and coordinates
-            if not os.path.exists("logs/tmp/Vehicle_" + str(veh_id) + "/plate_track.json"):
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plate_track.json", "w")
-                f.write("{\n\t\"frames\": [\n\t\t{\n\t\t\t\"frame\": \"" + str(int(stream.get(cv2.CAP_PROP_POS_FRAMES))) + "\",\n\t\t\t\"x1\": \"" + str(x1) + "\",\n\t\t\t\"y1\": \"" + str(y1) + "\",\n\t\t\t\"x2\": \"" + str(x2) + "\",\n\t\t\t\"y2\": \"" + str(y2) + "\"\n\t\t}\n\t]\n}")
-                f.close()
-                # if the json file does exist, append the frame number and coordinates
+            plate_track_file_path = "logs/tmp/Vehicle_" + str(veh_id) + "/plate_track.json"
+
+            # Get the current frame number
+            frame_number = str(int(stream.get(cv2.CAP_PROP_POS_FRAMES)))
+
+            # Coordinates dictionary for the current frame
+            current_frame_data = {
+                frame_number: {
+                    "x1": str(x1),
+                    "y1": str(y1),
+                    "x2": str(x2),
+                    "y2": str(y2)
+                }
+            }
+
+            # Check if the file exists
+            if not os.path.exists(plate_track_file_path):
+                # If the file does not exist, create it with the current frame data
+                with open(plate_track_file_path, 'w') as f:
+                    json.dump({frame_number: current_frame_data[frame_number]}, f, indent=4)
             else:
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plate_track.json", "r")
-                data = f.read()
-                f.close()
-                data = data.replace("]", ",\n\t\t{\n\t\t\t\"frame\": \"" + str(int(stream.get(cv2.CAP_PROP_POS_FRAMES))) + "\",\n\t\t\t\"x1\": \"" + str(x1) + "\",\n\t\t\t\"y1\": \"" + str(y1) + "\",\n\t\t\t\"x2\": \"" + str(x2) + "\",\n\t\t\t\"y2\": \"" + str(y2) + "\"\n\t\t}\n\t]")
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plate_track.json", "w")
-                f.write(data)
-                f.close()
+                # If the file exists, read its content, update it, and write it back
+                with open(plate_track_file_path, 'r') as f:
+                    data = json.load(f)
+
+                # Update the data with the current frame
+                data.update(current_frame_data)
+
+                # Write the updated data back to the file
+                with open(plate_track_file_path, 'w') as f:
+                    json.dump(data, f, indent=4)
         
         ############################
 
