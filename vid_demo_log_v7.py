@@ -133,13 +133,6 @@ def create_perm_log(veh_id, vid, write_fps):
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(f"{seen_path}/video.mp4", fourcc, write_fps, (width, height))
 
-    # Restructure vehicle and plate tracking data
-    if (vehicle_data_found):
-        vehicle_frames_dict = {int(d['frame']): d for d in vehicle_data['frames']}
-
-    if (plate_data_found):
-        plate_frames_dict = {int(d['frame']): d for d in plate_track_data['frames']}
-
     # Process each frame and save one cropped image of the vehicle and plate
     frame_dir = f"logs/tmp/Vehicle_{veh_id}/frames"
     frame_numbers = sorted([int(frame.split('.')[0]) for frame in os.listdir(frame_dir) if frame.endswith('.jpg')])
@@ -153,7 +146,7 @@ def create_perm_log(veh_id, vid, write_fps):
 
             # Retrieve vehicle frame data and draw bounding box
             if (vehicle_data_found):
-                vehicle_frame_data = vehicle_frames_dict.get(frame_num)
+                vehicle_frame_data = vehicle_data.get(str(frame_num))
                 if vehicle_frame_data:
                     vx1, vy1, vx2, vy2 = map(int, [vehicle_frame_data['x1'], vehicle_frame_data['y1'], vehicle_frame_data['x2'], vehicle_frame_data['y2']])
                     cv2.rectangle(img, (vx1, vy1), (vx2, vy2), (0, 0, 255), 2)
@@ -167,7 +160,7 @@ def create_perm_log(veh_id, vid, write_fps):
 
             # Retrieve plate frame data, adjust to vehicle coordinates, and draw cornered bounding box
             if (plate_data_found):
-                plate_frame_data = plate_frames_dict.get(frame_num)
+                plate_frame_data = plate_track_data.get(str(frame_num))
                 if plate_frame_data and vehicle_frame_data:
                     px1, py1, px2, py2 = map(int, [plate_frame_data['x1'], plate_frame_data['y1'], plate_frame_data['x2'], plate_frame_data['y2']])
 
@@ -206,7 +199,7 @@ def create_perm_log(veh_id, vid, write_fps):
     out.release()
 
     # delete the tmp folder for the vehicle 
-    # REMOVED FOR DEV ONLY os.system("rm -rf logs/tmp/Vehicle_" + str(veh_id))
+    os.system("rm -rf logs/tmp/Vehicle_" + str(veh_id))
 
 #_# ALPR functions #_#
 def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
