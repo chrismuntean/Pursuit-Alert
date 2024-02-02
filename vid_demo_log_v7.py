@@ -311,18 +311,30 @@ def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
                 os.makedirs("logs/tmp/Vehicle_" + str(veh_id))
 
             # then log the same data into a json file in the root log folder
-            if not os.path.exists("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json"):
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json", "w")
-                f.write("{\n\t\"plates\": [\n\t\t{\n\t\t\t\"plate\": \"" + characters + "\",\n\t\t\t\"confidence\": \"" + confidence + "\"\n\t\t}\n\t]\n}")
-                f.close()
+            plates_file_path = "logs/tmp/Vehicle_" + str(veh_id) + "/plates.json"
+
+            # Data for the current plate
+            current_plate_data = {
+                "plate": characters,
+                "confidence": confidence
+            }
+
+            # Check if the file exists
+            if not os.path.exists(plates_file_path):
+                # If the file does not exist, create it with the current plate data in a list
+                with open(plates_file_path, 'w') as f:
+                    json.dump([current_plate_data], f, indent=4)
             else:
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json", "r")
-                data = f.read()
-                f.close()
-                data = data.replace("]", ",\n\t\t{\n\t\t\t\"plate\": \"" + characters + "\",\n\t\t\t\"confidence\": \"" + confidence + "\"\n\t\t}\n\t]")
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json", "w")
-                f.write(data)
-                f.close()
+                # If the file exists, read its content, update it, and write it back
+                with open(plates_file_path, 'r') as f:
+                    plates_list = json.load(f)
+
+                # Append the current plate data to the list
+                plates_list.append(current_plate_data)
+
+                # Write the updated list back to the file
+                with open(plates_file_path, 'w') as f:
+                    json.dump(plates_list, f, indent=4)
 
         elif len(characters) >= 3:
             cv2.rectangle(frame, (x1 + int(veh_plot[0]) + int(plate_plot[0]), y1 + int(veh_plot[1]) + int(plate_plot[1])), (x2 + int(veh_plot[0]) + int(plate_plot[0]), y2 + int(veh_plot[1]) + int(plate_plot[1])), (0, 255, 255), 4)
