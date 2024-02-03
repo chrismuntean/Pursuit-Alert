@@ -195,6 +195,17 @@ def create_perm_log(veh_id, vid, write_fps):
 
     out.release()
 
+    # create /logs/perm/all_plates.json if it doesn't exist
+    if not os.path.exists("logs/perm/all_plates.json"):
+        with open("logs/perm/all_plates.json", "w") as file:
+            json.dump({}, file)
+
+    # Load all plates from all_plates.json
+    with open("logs/perm/all_plates.json", "r") as file:
+        all_plates = json.load(file)
+
+    # Add the voted plate, this, that, someting else, etc. to all_plates.json
+
     # delete the tmp folder for the vehicle 
     os.system("rm -rf logs/tmp/Vehicle_" + str(veh_id))
 
