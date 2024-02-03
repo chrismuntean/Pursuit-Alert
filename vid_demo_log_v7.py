@@ -6,6 +6,7 @@ import easyocr
 from collections import Counter
 import json
 from colorama import Fore, Back, Style
+import uuid
 
 # initialize models
 vehicle_detector = YOLO('models/yolov8n.pt') # object detection
@@ -109,21 +110,17 @@ def create_perm_log(veh_id, vid, write_fps):
             plate_data_found = True
     else:
         plate_data_found = False
-        
+    
+    # generate the UUID for the perm log
+    perm_uuid = str(uuid.uuid4())
+
     # Apply the temporal redundancy voting algorithm
     voted_plate = temporal_redundancy_voting(plate_strings)
 
     # Create permanent log directory
-    perm_path = f"logs/perm/{voted_plate}"
+    perm_path = f"logs/perm/{perm_uuid}"
     if not os.path.exists(perm_path):
         os.makedirs(perm_path)
-
-    # Determine the correct directory name with a counter
-    count = 1
-    while os.path.exists(f"{perm_path}/seen_{count}"):
-        count += 1
-    seen_path = f"{perm_path}/seen_{count}"
-    os.makedirs(seen_path)
 
     # Get frame size for the video
     width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -131,7 +128,7 @@ def create_perm_log(veh_id, vid, write_fps):
 
     # Create video writer object
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(f"{seen_path}/video.mp4", fourcc, write_fps, (width, height))
+    out = cv2.VideoWriter(f"{perm_path}/video.mp4", fourcc, write_fps, (width, height))
 
     # Process each frame and save one cropped image of the vehicle and plate
     frame_dir = f"logs/tmp/Vehicle_{veh_id}/frames"
@@ -155,7 +152,7 @@ def create_perm_log(veh_id, vid, write_fps):
                     # Crop and save one image of the vehicle and plate
                     if not cropped_vehicle_saved:
                         cropped_vehicle = img[vy1:vy2, vx1:vx2]
-                        cv2.imwrite(f"{seen_path}/cropped_vehicle.jpg", cropped_vehicle)
+                        cv2.imwrite(f"{perm_path}/cropped_vehicle.jpg", cropped_vehicle)
                         cropped_vehicle_saved = True
 
             # Retrieve plate frame data, adjust to vehicle coordinates, and draw cornered bounding box
@@ -190,7 +187,7 @@ def create_perm_log(veh_id, vid, write_fps):
                     # Crop and save one image of the plate
                     if not cropped_plate_saved:
                         cropped_plate = img[py1:py2, px1:px2]
-                        cv2.imwrite(f"{seen_path}/cropped_plate.jpg", cropped_plate)
+                        cv2.imwrite(f"{perm_path}/cropped_plate.jpg", cropped_plate)
                         cropped_plate_saved = True
 
             # Write the frame to the video
