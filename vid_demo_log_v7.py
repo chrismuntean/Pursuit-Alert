@@ -13,22 +13,6 @@ vehicle_detector = YOLO('models/yolov8n.pt') # object detection
 plate_detector = YOLO('models/license_plate.pt') # object detection
 character_detector = easyocr.Reader(['en']) # optical character recognition
 
-def clear_logs():
-
-    # delete the log folder if it exists and create a new one (or if it doesn't exist)
-    if os.path.exists("logs"):
-        os.system("rm -rf logs")
-        os.makedirs("logs")
-    else:
-        os.makedirs("logs")
-
-    # delete the frames folder if it exists and create a new one (or if it doesn't exist)
-    if os.path.exists("frames"):
-        os.system("rm -rf frames")
-        os.makedirs("frames")
-    else:
-        os.makedirs("frames")
-
 def calc_write_fps(stream, frame_skip):
 
     # calculate the coresponding re-write fps based on the frame_skip and the original video fps
@@ -45,6 +29,22 @@ def calc_write_fps(stream, frame_skip):
     return write_fps
 
 #_# FOR DEVELOPMENT ONLY #_#
+def clear_logs():
+
+    # delete the log folder if it exists and create a new one (or if it doesn't exist)
+    if os.path.exists("logs"):
+        os.system("rm -rf logs")
+        os.makedirs("logs")
+    else:
+        os.makedirs("logs")
+
+    # delete the frames folder if it exists and create a new one (or if it doesn't exist)
+    if os.path.exists("frames"):
+        os.system("rm -rf frames")
+        os.makedirs("frames")
+    else:
+        os.makedirs("frames")
+
 def create_dev_vid(stream, write_fps):
 
     # get the frame size from the original video stream
@@ -204,7 +204,33 @@ def create_perm_log(veh_id, vid, write_fps):
     with open("logs/perm/all_plates.json", "r") as file:
         all_plates = json.load(file)
 
-    # Add the voted plate, this, that, someting else, etc. to all_plates.json
+    # Get the date and time
+    date = time.strftime("%d/%m/%Y")
+    time_now = time.strftime("%H:%M")
+
+    # Add the new detection to all_plates.json
+    if voted_plate in all_plates:
+        all_plates[voted_plate].append({
+            "date": date,
+            "time": time_now,
+            "veh_crop_path": f"/perm/{perm_uuid}/cropped_vehicle.jpg",
+            "plate_crop_path": f"/perm/{perm_uuid}/cropped_plate.jpg",
+            "video_path": f"/perm/{perm_uuid}/video.mp4",
+            "log_id": perm_uuid
+        })
+    else:
+        all_plates[voted_plate] = [{
+            "date": date,
+            "time": time_now,
+            "veh_crop_path": f"/perm/{perm_uuid}/cropped_vehicle.jpg",
+            "plate_crop_path": f"/perm/{perm_uuid}/cropped_plate.jpg",
+            "video_path": f"/perm/{perm_uuid}/video.mp4",
+            "log_id": perm_uuid
+        }]
+
+    # Write the updated all_plates.json
+    with open("logs/perm/all_plates.json", "w") as file:
+        json.dump(all_plates, file, indent=4)
 
     # delete the tmp folder for the vehicle 
     os.system("rm -rf logs/tmp/Vehicle_" + str(veh_id))
@@ -408,7 +434,8 @@ def detect_plate(veh_crop, veh_plot, veh_id, stream):
 def detect_vehicles(frame, stream):
 
     # detect the vehicle (veh) in the frame
-    veh_results = vehicle_detector.track(frame, classes=2, persist=True)
+    # use classes 2 (car), 3 (motorcycle), 5, (bus), and 7 (truck)
+    veh_results = vehicle_detector.track(frame, classes=[2,3,5,7], persist=True)
 
     # create a list with all of the veh ids
     all_veh_ids = [int(veh[4]) for veh in veh_results[0].boxes.data]
@@ -518,7 +545,7 @@ def detect_vehicles(frame, stream):
 ############################
 
 # start by clearing the logs
-clear_logs()
+clear_logs() # FOR DEVELOPMENT ONLY
 
 ###################################
 ### DO NOT EDIT ABOVE THIS LINE ###
@@ -527,7 +554,7 @@ clear_logs()
 # get the video file path
 stream_path = 'test_files/test_vids/test_vid_7_(4k).mov'
 # vid_path = 0 # for webcam
-frame_skip = 10 # maxes out at the fps of original video/ camera stream
+frame_skip = 0 # maxes out at the fps of original video/ camera stream
 # frame_skip = 0 # no frame skipping
 
 #### CONFIGURATION  VARIABLES #####
