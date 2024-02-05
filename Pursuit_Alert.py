@@ -6,27 +6,15 @@ import easyocr
 from collections import Counter
 import json
 from colorama import Fore, Back, Style
+import uuid
+import streamlit as st
+import sys
+import io
 
 # initialize models
 vehicle_detector = YOLO('models/yolov8n.pt') # object detection
 plate_detector = YOLO('models/license_plate.pt') # object detection
 character_detector = easyocr.Reader(['en']) # optical character recognition
-
-def clear_logs():
-
-    # delete the log folder if it exists and create a new one (or if it doesn't exist)
-    if os.path.exists("logs"):
-        os.system("rm -rf logs")
-        os.makedirs("logs")
-    else:
-        os.makedirs("logs")
-
-    # delete the frames folder if it exists and create a new one (or if it doesn't exist)
-    if os.path.exists("frames"):
-        os.system("rm -rf frames")
-        os.makedirs("frames")
-    else:
-        os.makedirs("frames")
 
 def calc_write_fps(stream, frame_skip):
 
@@ -44,6 +32,22 @@ def calc_write_fps(stream, frame_skip):
     return write_fps
 
 #_# FOR DEVELOPMENT ONLY #_#
+def clear_logs():
+
+    # delete the log folder if it exists and create a new one (or if it doesn't exist)
+    if os.path.exists("logs"):
+        os.system("rm -rf logs")
+        os.makedirs("logs")
+    else:
+        os.makedirs("logs")
+
+    # delete the frames folder if it exists and create a new one (or if it doesn't exist)
+    if os.path.exists("frames"):
+        os.system("rm -rf frames")
+        os.makedirs("frames")
+    else:
+        os.makedirs("frames")
+
 def create_dev_vid(stream, write_fps):
 
     # get the frame size from the original video stream
@@ -57,12 +61,7 @@ def create_dev_vid(stream, write_fps):
     return out
 #^# FOR DEVELOPMENT ONLY #^#
 
-def temporal_redundancy_voting(plates):
-    
-    # Extracting plate strings
-    plate_strings = [plate['plate'] for plate in plates]
-
-    print(plate_strings)
+def temporal_redundancy_voting(plate_strings):
 
     # Determine the maximum length of the plates
     max_length = max(len(plate) for plate in plate_strings)
@@ -99,7 +98,7 @@ def create_perm_log(veh_id, vid, write_fps):
     # Load plate strings and vehicle tracking data from JSON files if they exist
     with open(f"logs/tmp/Vehicle_{veh_id}/plates.json", "r") as file:
         plate_strings = json.load(file)
-        plate_strings = plate_strings['plates']
+        plate_strings = [entry["plate"] for entry in plate_strings]
     
     if os.path.exists("logs/tmp/Vehicle_" + str(veh_id) + "/vehicle_track.json"):
         with open(f"logs/tmp/Vehicle_{veh_id}/vehicle_track.json", "r") as file:
@@ -114,21 +113,17 @@ def create_perm_log(veh_id, vid, write_fps):
             plate_data_found = True
     else:
         plate_data_found = False
-        
+    
+    # generate the UUID for the perm log
+    perm_uuid = str(uuid.uuid4())
+
     # Apply the temporal redundancy voting algorithm
     voted_plate = temporal_redundancy_voting(plate_strings)
 
     # Create permanent log directory
-    perm_path = f"logs/perm/{voted_plate}"
+    perm_path = f"logs/perm/{perm_uuid}"
     if not os.path.exists(perm_path):
         os.makedirs(perm_path)
-
-    # Determine the correct directory name with a counter
-    count = 1
-    while os.path.exists(f"{perm_path}/seen_{count}"):
-        count += 1
-    seen_path = f"{perm_path}/seen_{count}"
-    os.makedirs(seen_path)
 
     # Get frame size for the video
     width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -136,14 +131,7 @@ def create_perm_log(veh_id, vid, write_fps):
 
     # Create video writer object
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(f"{seen_path}/video.mp4", fourcc, write_fps, (width, height))
-
-    # Restructure vehicle and plate tracking data
-    if (vehicle_data_found):
-        vehicle_frames_dict = {int(d['frame']): d for d in vehicle_data['frames']}
-
-    if (plate_data_found):
-        plate_frames_dict = {int(d['frame']): d for d in plate_track_data['frames']}
+    out = cv2.VideoWriter(f"{perm_path}/video.mp4", fourcc, write_fps, (width, height))
 
     # Process each frame and save one cropped image of the vehicle and plate
     frame_dir = f"logs/tmp/Vehicle_{veh_id}/frames"
@@ -158,7 +146,7 @@ def create_perm_log(veh_id, vid, write_fps):
 
             # Retrieve vehicle frame data and draw bounding box
             if (vehicle_data_found):
-                vehicle_frame_data = vehicle_frames_dict.get(frame_num)
+                vehicle_frame_data = vehicle_data.get(str(frame_num))
                 if vehicle_frame_data:
                     vx1, vy1, vx2, vy2 = map(int, [vehicle_frame_data['x1'], vehicle_frame_data['y1'], vehicle_frame_data['x2'], vehicle_frame_data['y2']])
                     cv2.rectangle(img, (vx1, vy1), (vx2, vy2), (0, 0, 255), 2)
@@ -167,12 +155,12 @@ def create_perm_log(veh_id, vid, write_fps):
                     # Crop and save one image of the vehicle and plate
                     if not cropped_vehicle_saved:
                         cropped_vehicle = img[vy1:vy2, vx1:vx2]
-                        cv2.imwrite(f"{seen_path}/cropped_vehicle.jpg", cropped_vehicle)
+                        cv2.imwrite(f"{perm_path}/cropped_vehicle.jpg", cropped_vehicle)
                         cropped_vehicle_saved = True
 
             # Retrieve plate frame data, adjust to vehicle coordinates, and draw cornered bounding box
             if (plate_data_found):
-                plate_frame_data = plate_frames_dict.get(frame_num)
+                plate_frame_data = plate_track_data.get(str(frame_num))
                 if plate_frame_data and vehicle_frame_data:
                     px1, py1, px2, py2 = map(int, [plate_frame_data['x1'], plate_frame_data['y1'], plate_frame_data['x2'], plate_frame_data['y2']])
 
@@ -202,7 +190,7 @@ def create_perm_log(veh_id, vid, write_fps):
                     # Crop and save one image of the plate
                     if not cropped_plate_saved:
                         cropped_plate = img[py1:py2, px1:px2]
-                        cv2.imwrite(f"{seen_path}/cropped_plate.jpg", cropped_plate)
+                        cv2.imwrite(f"{perm_path}/cropped_plate.jpg", cropped_plate)
                         cropped_plate_saved = True
 
             # Write the frame to the video
@@ -210,8 +198,45 @@ def create_perm_log(veh_id, vid, write_fps):
 
     out.release()
 
+    # create /logs/perm/all_plates.json if it doesn't exist
+    if not os.path.exists("logs/perm/all_plates.json"):
+        with open("logs/perm/all_plates.json", "w") as file:
+            json.dump({}, file)
+
+    # Load all plates from all_plates.json
+    with open("logs/perm/all_plates.json", "r") as file:
+        all_plates = json.load(file)
+
+    # Get the date and time
+    date = time.strftime("%d/%m/%Y")
+    time_now = time.strftime("%H:%M")
+
+    # Add the new detection to all_plates.json
+    if voted_plate in all_plates:
+        all_plates[voted_plate].append({
+            "date": date,
+            "time": time_now,
+            "veh_crop_path": f"/perm/{perm_uuid}/cropped_vehicle.jpg",
+            "plate_crop_path": f"/perm/{perm_uuid}/cropped_plate.jpg",
+            "video_path": f"/perm/{perm_uuid}/video.mp4",
+            "log_id": perm_uuid
+        })
+    else:
+        all_plates[voted_plate] = [{
+            "date": date,
+            "time": time_now,
+            "veh_crop_path": f"/perm/{perm_uuid}/cropped_vehicle.jpg",
+            "plate_crop_path": f"/perm/{perm_uuid}/cropped_plate.jpg",
+            "video_path": f"/perm/{perm_uuid}/video.mp4",
+            "log_id": perm_uuid
+        }]
+
+    # Write the updated all_plates.json
+    with open("logs/perm/all_plates.json", "w") as file:
+        json.dump(all_plates, file, indent=4)
+
     # delete the tmp folder for the vehicle 
-    # REMOVED FOR DEV ONLY os.system("rm -rf logs/tmp/Vehicle_" + str(veh_id))
+    os.system("rm -rf logs/tmp/Vehicle_" + str(veh_id))
 
 #_# ALPR functions #_#
 def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
@@ -255,7 +280,7 @@ def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
         plate_strings = json.load(open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json"))
 
         # extract the plates from the JSON data
-        plates = plate_strings['plates']
+        plates = [entry["plate"] for entry in plate_strings]
 
         # get the number of plates detected
         num_plates = len(plates)
@@ -313,18 +338,30 @@ def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
                 os.makedirs("logs/tmp/Vehicle_" + str(veh_id))
 
             # then log the same data into a json file in the root log folder
-            if not os.path.exists("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json"):
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json", "w")
-                f.write("{\n\t\"plates\": [\n\t\t{\n\t\t\t\"plate\": \"" + characters + "\",\n\t\t\t\"confidence\": \"" + confidence + "\"\n\t\t}\n\t]\n}")
-                f.close()
+            plates_file_path = "logs/tmp/Vehicle_" + str(veh_id) + "/plates.json"
+
+            # Data for the current plate
+            current_plate_data = {
+                "plate": characters,
+                "confidence": confidence
+            }
+
+            # Check if the file exists
+            if not os.path.exists(plates_file_path):
+                # If the file does not exist, create it with the current plate data in a list
+                with open(plates_file_path, 'w') as f:
+                    json.dump([current_plate_data], f, indent=4)
             else:
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json", "r")
-                data = f.read()
-                f.close()
-                data = data.replace("]", ",\n\t\t{\n\t\t\t\"plate\": \"" + characters + "\",\n\t\t\t\"confidence\": \"" + confidence + "\"\n\t\t}\n\t]")
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plates.json", "w")
-                f.write(data)
-                f.close()
+                # If the file exists, read its content, update it, and write it back
+                with open(plates_file_path, 'r') as f:
+                    plates_list = json.load(f)
+
+                # Append the current plate data to the list
+                plates_list.append(current_plate_data)
+
+                # Write the updated list back to the file
+                with open(plates_file_path, 'w') as f:
+                    json.dump(plates_list, f, indent=4)
 
         elif len(characters) >= 3:
             cv2.rectangle(frame, (x1 + int(veh_plot[0]) + int(plate_plot[0]), y1 + int(veh_plot[1]) + int(plate_plot[1])), (x2 + int(veh_plot[0]) + int(plate_plot[0]), y2 + int(veh_plot[1]) + int(plate_plot[1])), (0, 255, 255), 4)
@@ -359,20 +396,37 @@ def detect_plate(veh_crop, veh_plot, veh_id, stream):
 
         # if the vehicle id is in the target list create a json file under the vehicle's tmp folder called "plate_track.json" and write the frame number and coordinates to it
         if veh_id in target_vehicles:
-            # if the json file does not exist, create it and add the frame number and coordinates
-            if not os.path.exists("logs/tmp/Vehicle_" + str(veh_id) + "/plate_track.json"):
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plate_track.json", "w")
-                f.write("{\n\t\"frames\": [\n\t\t{\n\t\t\t\"frame\": \"" + str(int(stream.get(cv2.CAP_PROP_POS_FRAMES))) + "\",\n\t\t\t\"x1\": \"" + str(x1) + "\",\n\t\t\t\"y1\": \"" + str(y1) + "\",\n\t\t\t\"x2\": \"" + str(x2) + "\",\n\t\t\t\"y2\": \"" + str(y2) + "\"\n\t\t}\n\t]\n}")
-                f.close()
-                # if the json file does exist, append the frame number and coordinates
+            plate_track_file_path = "logs/tmp/Vehicle_" + str(veh_id) + "/plate_track.json"
+
+            # Get the current frame number
+            frame_number = str(int(stream.get(cv2.CAP_PROP_POS_FRAMES)))
+
+            # Coordinates dictionary for the current frame
+            current_frame_data = {
+                frame_number: {
+                    "x1": str(x1),
+                    "y1": str(y1),
+                    "x2": str(x2),
+                    "y2": str(y2)
+                }
+            }
+
+            # Check if the file exists
+            if not os.path.exists(plate_track_file_path):
+                # If the file does not exist, create it with the current frame data
+                with open(plate_track_file_path, 'w') as f:
+                    json.dump({frame_number: current_frame_data[frame_number]}, f, indent=4)
             else:
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plate_track.json", "r")
-                data = f.read()
-                f.close()
-                data = data.replace("]", ",\n\t\t{\n\t\t\t\"frame\": \"" + str(int(stream.get(cv2.CAP_PROP_POS_FRAMES))) + "\",\n\t\t\t\"x1\": \"" + str(x1) + "\",\n\t\t\t\"y1\": \"" + str(y1) + "\",\n\t\t\t\"x2\": \"" + str(x2) + "\",\n\t\t\t\"y2\": \"" + str(y2) + "\"\n\t\t}\n\t]")
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/plate_track.json", "w")
-                f.write(data)
-                f.close()
+                # If the file exists, read its content, update it, and write it back
+                with open(plate_track_file_path, 'r') as f:
+                    data = json.load(f)
+
+                # Update the data with the current frame
+                data.update(current_frame_data)
+
+                # Write the updated data back to the file
+                with open(plate_track_file_path, 'w') as f:
+                    json.dump(data, f, indent=4)
         
         ############################
 
@@ -383,7 +437,8 @@ def detect_plate(veh_crop, veh_plot, veh_id, stream):
 def detect_vehicles(frame, stream):
 
     # detect the vehicle (veh) in the frame
-    veh_results = vehicle_detector.track(frame, classes=2, persist=True)
+    # use classes 2 (car), 3 (motorcycle), 5, (bus), and 7 (truck)
+    veh_results = vehicle_detector.track(frame, classes=[2,3,5,7], persist=True)
 
     # create a list with all of the veh ids
     all_veh_ids = [int(veh[4]) for veh in veh_results[0].boxes.data]
@@ -440,19 +495,37 @@ def detect_vehicles(frame, stream):
 
             ### write vehicle track data ###
             # if the json file does not exist, create it and add the frame number and coordinates
-            if not os.path.exists("logs/tmp/Vehicle_" + str(veh_id) + "/vehicle_track.json"):
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/vehicle_track.json", "w")
-                f.write("{\n\t\"frames\": [\n\t\t{\n\t\t\t\"frame\": \"" + str(int(stream.get(cv2.CAP_PROP_POS_FRAMES))) + "\",\n\t\t\t\"x1\": \"" + str(x1) + "\",\n\t\t\t\"y1\": \"" + str(y1) + "\",\n\t\t\t\"x2\": \"" + str(x2) + "\",\n\t\t\t\"y2\": \"" + str(y2) + "\"\n\t\t}\n\t]\n}")
-                f.close()
-            # if the json file does exist, append the frame number and coordinates
+            json_file_path = "logs/tmp/Vehicle_" + str(veh_id) + "/vehicle_track.json"
+
+            # Get the current frame number
+            frame_number = str(int(stream.get(cv2.CAP_PROP_POS_FRAMES)))
+
+            # Coordinates dictionary for the current frame
+            current_frame_data = {
+                frame_number: {
+                    "x1": str(x1),
+                    "y1": str(y1),
+                    "x2": str(x2),
+                    "y2": str(y2)
+                }
+            }
+
+            # Check if the file exists
+            if not os.path.exists(json_file_path):
+                # If the file does not exist, create it with the current frame data
+                with open(json_file_path, 'w') as f:
+                    json.dump({frame_number: current_frame_data[frame_number]}, f, indent=4)
             else:
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/vehicle_track.json", "r")
-                data = f.read()
-                f.close()
-                data = data.replace("]", ",\n\t\t{\n\t\t\t\"frame\": \"" + str(int(stream.get(cv2.CAP_PROP_POS_FRAMES))) + "\",\n\t\t\t\"x1\": \"" + str(x1) + "\",\n\t\t\t\"y1\": \"" + str(y1) + "\",\n\t\t\t\"x2\": \"" + str(x2) + "\",\n\t\t\t\"y2\": \"" + str(y2) + "\"\n\t\t}\n\t]")
-                f = open("logs/tmp/Vehicle_" + str(veh_id) + "/vehicle_track.json", "w")
-                f.write(data)
-                f.close()
+                # If the file exists, read its content, update it, and write it back
+                with open(json_file_path, 'r') as f:
+                    data = json.load(f)
+
+                # Update the data with the current frame
+                data.update(current_frame_data)
+
+                # Write the updated data back to the file
+                with open(json_file_path, 'w') as f:
+                    json.dump(data, f, indent=4)
             ###
 
         ############################
@@ -469,13 +542,27 @@ def detect_vehicles(frame, stream):
         # the detect_plate() function will continue the process to char detection
         detect_plate(veh_crop, veh_plot, veh_id, stream)
 #^# ALPR functions #^#
+        
+#_# Web app functions #_#
+if 'start_processing' not in st.session_state:
+    st.session_state.start_processing = False
+
+st.title("Pursuit Alert")
+
+if st.button('Start/Stop Detection'):
+    st.session_state.start_processing = not st.session_state.start_processing
+
+st.write("Processing is ", "Running" if st.session_state.start_processing else "Stopped")
+
+frame_placeholder = st.empty()
+#^# Web app functions #^#
 
 ############################
 ############################
 ############################
 
 # start by clearing the logs
-clear_logs()
+clear_logs() # FOR DEVELOPMENT ONLY
 
 ###################################
 ### DO NOT EDIT ABOVE THIS LINE ###
@@ -504,7 +591,7 @@ dev_out = create_dev_vid(stream, write_fps) # FOR DEVELOPMENT ONLY
 target_vehicles = []
 
 # create a loop to go through every frame
-while True:
+while st.session_state.start_processing:
 
     # set the frame_skip on the video stream
     stream.set(cv2.CAP_PROP_POS_FRAMES, stream.get(cv2.CAP_PROP_POS_FRAMES) + frame_skip)
@@ -524,6 +611,9 @@ while True:
     cv2.imwrite("frames/current_frame.jpg", frame)
     
     dev_out.write(frame) # FOR DEVELOPMENT ONLY
+
+    # display the frame in the web app
+    frame_placeholder.image(frame, channels="BGR", use_column_width=True)
 
 # release the video capture object
 stream.release()
