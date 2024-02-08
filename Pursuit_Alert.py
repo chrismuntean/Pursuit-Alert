@@ -8,8 +8,6 @@ import json
 from colorama import Fore, Back, Style
 import uuid
 import streamlit as st
-import sys
-import io
 
 # initialize models
 vehicle_detector = YOLO('models/yolov8n.pt') # object detection
@@ -552,7 +550,7 @@ st.title("Pursuit Alert")
 if st.button('Start/Stop Detection'):
     st.session_state.start_processing = not st.session_state.start_processing
 
-st.write("Processing is ", "Running" if st.session_state.start_processing else "Stopped")
+st.write("Processing is ", "running" if st.session_state.start_processing else "stopped")
 
 frame_placeholder = st.empty()
 #^# Web app functions #^#
@@ -569,8 +567,8 @@ clear_logs() # FOR DEVELOPMENT ONLY
 #### CONFIGURATION  VARIABLES #####
 
 # get the video file path
-stream_path = 'test_files/test_vids/test_vid_7_(4k).mov'
-# vid_path = 0 # for webcam
+# stream_path = 'test_files/test_vids/test_vid_7_(4k).mov'
+stream_path = 1 # for webcam
 frame_skip = 10 # maxes out at the fps of original video/ camera stream
 # frame_skip = 0 # no frame skipping
 
