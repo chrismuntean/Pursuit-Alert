@@ -545,7 +545,7 @@ def detect_vehicles(frame, stream):
 if 'start_processing' not in st.session_state:
     st.session_state.start_processing = False
 
-st.title("Pursuit Alert")
+st.header("Pursuit Alert", divider = 'gray')
 
 if st.button('Start/Stop Detection'):
     st.session_state.start_processing = not st.session_state.start_processing
@@ -553,6 +553,41 @@ if st.button('Start/Stop Detection'):
 st.write("Processing is ", "running" if st.session_state.start_processing else "stopped")
 
 frame_placeholder = st.empty()
+
+# get the source
+# if selected webcam
+if st.session_state['cam_or_vid'] == False:
+
+    # check if the webcam index is not in the session state or if it is NULL
+    if 'cam_index' not in st.session_state or st.session_state['cam_index'] == None:
+        # display an error
+        st.error("Please select a webcam index")
+        source = None
+
+    # if the webcam index is in the session state and is not NULL
+    else:
+        # set the source to the webcam index
+        source = st.session_state['cam_index']
+
+# if selected video file
+else:
+
+    # check if the video file path is not in the session state or if it is NULL
+    if 'file_path' not in st.session_state or st.session_state['file_path'] == None:
+        # display an error
+        st.error("Please select a video file")
+        source = None
+
+    # if the video file path is in the session state and is not NULL
+    else:
+        # set the source to the video file path
+        source = st.session_state['file_path']
+
+st.sidebar.write("Source: ", source)
+
+# write the session state variables to the sidebar (navbar) for development
+st.sidebar.write('### Session state variables')
+st.sidebar.write(st.session_state)
 #^# Web app functions #^#
 
 ############################
@@ -563,17 +598,15 @@ frame_placeholder = st.empty()
 clear_logs() # FOR DEVELOPMENT ONLY
 
 ###################################
-### DO NOT EDIT ABOVE THIS LINE ###
 #### CONFIGURATION  VARIABLES #####
 
 # get the video file path
 # stream_path = 'test_files/test_vids/test_vid_7_(4k).mov'
-stream_path = 1 # for webcam
+stream_path = source # for webcam
 frame_skip = 10 # maxes out at the fps of original video/ camera stream
 # frame_skip = 0 # no frame skipping
 
 #### CONFIGURATION  VARIABLES #####
-### DO NOT EDIT BELOW THIS LINE ###
 ###################################
 
 # create a video capture object from video stream

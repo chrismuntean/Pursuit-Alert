@@ -4,3 +4,7 @@ test_files/
 # Ignore logs/ and frames/ since they are created based on input
 logs/
 frames/
+
+# Ignore the pycache directorys
+__pycache__/
+pages/__pycache__/
