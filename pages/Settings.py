@@ -3,6 +3,7 @@ import subprocess
 import streamlit as st
 import pandas as pd
 import tempfile
+import cv2
 
 # Initialize session state variables if not already set
 if 'cam_or_vid' not in st.session_state:
@@ -18,13 +19,7 @@ if 'file_path' not in st.session_state:
 def list_webcams():
     # use the lsusb command to list all usb devices
     device_re = re.compile(b"Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
-
-    # check if the lsusb command is available
-    try:
-        df = subprocess.check_output("lsusb", shell=True)
-    except FileNotFoundError:
-        st.error("lsusb command not found.\nPlease install the usbutils package and refresh the page.")
-        return
+    df = subprocess.check_output("lsusb", shell = True)
     
     # create an empty list to store the webcams
     devices = []
@@ -47,6 +42,18 @@ def list_webcams():
         devices[i] = {i: device}
 
     return devices
+
+def classify_resolution(width, height):
+    if height >= 2160 or width >= 3840:
+        return "4K"
+    elif height >= 1080 or width >= 1920:
+        return "1080p"
+    elif height >= 720 or width >= 1280:
+        return "720p"
+    elif height >= 480 or width >= 640:
+        return "480p"
+    else:
+        return "Low Resolution"
 
 # create a streamlit app
 st.header('General Settings', divider = 'gray')
@@ -97,7 +104,7 @@ elif cam_or_vid == True:
 
     st.session_state['cam_or_vid'] = True
     uploaded_file = st.file_uploader("Upload a video", type=["mp4", "mov", "avi", "mkv"], 
-                                     accept_multiple_files=False)
+                                     accept_multiple_files = False)
     
     # set the session state
     if uploaded_file is not None:
@@ -110,6 +117,63 @@ elif cam_or_vid == True:
             
             # Store the path of the temporary file in session_state
             st.session_state['file_path'] = tmp_file.name
+
+    st.divider()
+
+st.write('### Set the frame skip:')
+
+# if the user selected a webcam
+if st.session_state['cam_or_vid'] == False:
+    
+    # check if the webcam index is set
+    if st.session_state['cam_index'] is not None:
+
+        #_# GET WEBCAM PROPERTIES #_#
+        #############################
+
+        # try opening the webcam
+        # if the webcam is not found, display an error message
+        try:
+            cap = cv2.VideoCapture(st.session_state['cam_index'])
+
+            # get the frame rate
+            frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
+
+            # get the resolution from the width and height
+            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+            # classify the resolution
+            resolution = classify_resolution(width, height)
+
+            st.code('Input FPS:', frame_rate)
+            st.code('Input resolution:', resolution)
+
+            # display the slider
+            frame_rate = st.slider('Select frame rate:', min_value=1, max_value=30, value=15)
+
+        except:
+
+            # display a generic error message
+            st.error('An error occurred while trying to access the webcam')
+
+    else:
+        st.error('Please select an index')
+
+# if the user selected a video file
+elif st.session_state['cam_or_vid'] == True:
+
+    # check if the file path is set
+    if st.session_state['file_path'] is not None:
+
+        # GET THE CURRENT FRAME RATE FROM THE SELECTED VIDEO FILE
+
+        # display the slider
+        frame_rate = st.slider('Select frame rate:', min_value=1, max_value=30, value=15)
+
+    else:
+        st.error('Please upload a video file')
+
 
 # write the session state variables to the sidebar (navbar) for development
 st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
