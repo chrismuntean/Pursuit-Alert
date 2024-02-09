@@ -5,6 +5,6 @@ test_files/
 logs/
 frames/
 
-# Ignore the pycache directorys
+# Ignore the pycache directorys if they get created again
 __pycache__/
 pages/__pycache__/

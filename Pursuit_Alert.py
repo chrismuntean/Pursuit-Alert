@@ -547,21 +547,19 @@ if 'start_processing' not in st.session_state:
 
 st.header("Pursuit Alert", divider = 'gray')
 
-if st.button('Start/Stop Detection'):
-    st.session_state.start_processing = not st.session_state.start_processing
-
-st.write("Processing is ", "running" if st.session_state.start_processing else "stopped")
-
 frame_placeholder = st.empty()
 
-# get the source
+# get the source from the session state variables
 # if selected webcam
+if 'cam_or_vid' not in st.session_state:
+    st.session_state.cam_or_vid = False
+
 if st.session_state['cam_or_vid'] == False:
 
     # check if the webcam index is not in the session state or if it is NULL
     if 'cam_index' not in st.session_state or st.session_state['cam_index'] == None:
         # display an error
-        st.error("Please select a webcam index")
+        st.error("Please select a camera index in settings")
         source = None
 
     # if the webcam index is in the session state and is not NULL
@@ -575,7 +573,7 @@ else:
     # check if the video file path is not in the session state or if it is NULL
     if 'file_path' not in st.session_state or st.session_state['file_path'] == None:
         # display an error
-        st.error("Please select a video file")
+        st.error("Please upload a video file in settings")
         source = None
 
     # if the video file path is in the session state and is not NULL
@@ -583,11 +581,19 @@ else:
         # set the source to the video file path
         source = st.session_state['file_path']
 
-st.sidebar.write("Source: ", source)
+# if the source is not NULL
+if source != None:
+    if st.button('Start/Stop Detection'):
+        st.session_state.start_processing = not st.session_state.start_processing
+
+    st.write("Processing is ", "running" if st.session_state.start_processing else "stopped")
+
+st.sidebar.write("Source: ", source) # FOR DEVELOPMENT ONLY
 
 # write the session state variables to the sidebar (navbar) for development
-st.sidebar.write('### Session state variables')
-st.sidebar.write(st.session_state)
+st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
+st.sidebar.write(st.session_state) # FOR DEVELOPMENT ONLY
+
 #^# Web app functions #^#
 
 ############################

@@ -2,6 +2,7 @@ import re
 import subprocess
 import streamlit as st
 import pandas as pd
+import tempfile
 
 # Initialize session state variables if not already set
 if 'cam_or_vid' not in st.session_state:
@@ -17,8 +18,14 @@ if 'file_path' not in st.session_state:
 def list_webcams():
     # use the lsusb command to list all usb devices
     device_re = re.compile(b"Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
-    df = subprocess.check_output("lsusb", shell=True)
 
+    # check if the lsusb command is available
+    try:
+        df = subprocess.check_output("lsusb", shell=True)
+    except FileNotFoundError:
+        st.error("lsusb command not found.\nPlease install the usbutils package and refresh the page.")
+        return
+    
     # create an empty list to store the webcams
     devices = []
 
@@ -91,8 +98,18 @@ elif cam_or_vid == True:
     st.session_state['cam_or_vid'] = True
     uploaded_file = st.file_uploader("Upload a video", type=["mp4", "mov", "avi", "mkv"], 
                                      accept_multiple_files=False)
+    
+    # set the session state
     if uploaded_file is not None:
-        st.session_state['file_path'] = uploaded_file
+
+        # Use tempfile.NamedTemporaryFile to create a temporary file
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+
+            # Write the data from the uploaded file into the temporary file
+            tmp_file.write(uploaded_file.read())
+            
+            # Store the path of the temporary file in session_state
+            st.session_state['file_path'] = tmp_file.name
 
 # write the session state variables to the sidebar (navbar) for development
 st.sidebar.write('### Session state variables')
