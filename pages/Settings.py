@@ -112,5 +112,5 @@ elif cam_or_vid == True:
             st.session_state['file_path'] = tmp_file.name
 
 # write the session state variables to the sidebar (navbar) for development
-st.sidebar.write('### Session state variables')
-st.sidebar.write(st.session_state)
+st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
+st.sidebar.write(st.session_state) # FOR DEVELOPMENT ONLY
