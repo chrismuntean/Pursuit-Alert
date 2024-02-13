@@ -85,7 +85,7 @@ if cam_or_vid == False:
 
         # display the list of webcams as h3
         for tag in enumerate(webcam_tags):
-            st.text(tag[1])
+            st.code(tag[1])
 
     webcam_option = st.selectbox(
         '##### Select stream index:',
@@ -132,9 +132,14 @@ if st.session_state['cam_or_vid'] == False:
         #############################
 
         # try opening the webcam
-        # if the webcam is not found, display an error message
-        try:
-            cap = cv2.VideoCapture(st.session_state['cam_index'])
+        cap = cv2.VideoCapture(st.session_state['cam_index'])
+
+        # if the cap is not opened, display an error message
+        if not cap.isOpened():
+            st.error('That webcam index is not available. Please select another index.')
+
+        elif cap.isOpened():
+            st.success('Webcam connected successfully')
 
             # get the frame rate
             frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
@@ -146,16 +151,17 @@ if st.session_state['cam_or_vid'] == False:
             # classify the resolution
             resolution = classify_resolution(width, height)
 
-            st.code('Input FPS:', frame_rate)
-            st.code('Input resolution:', resolution)
+            st.code(f'Input FPS: {frame_rate}')
+            st.code(f'Input resolution: {resolution}')
 
             # display the slider
-            frame_rate = st.slider('Select frame rate:', min_value=1, max_value=30, value=15)
+            frame_skip = st.slider('#### Select frame skip:', min_value = 0, max_value = frame_rate, value = 10)
 
-        except:
+            # set the session state for the frame rate
+            st.session_state['frame_skip'] = frame_skip
 
-            # display a generic error message
-            st.error('An error occurred while trying to access the webcam')
+            # release the webcam
+            cap.release()
 
     else:
         st.error('Please select an index')
@@ -166,10 +172,33 @@ elif st.session_state['cam_or_vid'] == True:
     # check if the file path is set
     if st.session_state['file_path'] is not None:
 
-        # GET THE CURRENT FRAME RATE FROM THE SELECTED VIDEO FILE
+        #_# GET VIDEO PROPERTIES #_#
 
-        # display the slider
-        frame_rate = st.slider('Select frame rate:', min_value=1, max_value=30, value=15)
+        # try opening the video file
+        # if the video file is not found, display an error message
+        try:
+            cap = cv2.VideoCapture(st.session_state['file_path'])
+
+            # get the frame rate
+            frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
+
+            # get the resolution from the width and height
+            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+            # classify the resolution
+            resolution = classify_resolution(width, height)
+
+            st.code(f'Input FPS: {frame_rate}')
+            st.code(f'Input resolution: {resolution}')            
+
+            # display the slider
+            frame_rate = st.slider('Select frame rate:', min_value=1, max_value=30, value=15)
+        
+        except:
+            
+            # display a generic error message
+            st.error('An error occurred while trying to access the video file')
 
     else:
         st.error('Please upload a video file')
