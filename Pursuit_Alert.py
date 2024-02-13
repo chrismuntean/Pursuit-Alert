@@ -549,7 +549,10 @@ st.header("Pursuit Alert", divider = 'gray')
 
 frame_placeholder = st.empty()
 
-# get the source from the session state variables
+#_# SETTINGS HANDLING #_#
+#########################
+
+# get the stream_path from the session state variables
 # if selected webcam
 if 'cam_or_vid' not in st.session_state:
     st.session_state.cam_or_vid = False
@@ -560,12 +563,12 @@ if st.session_state['cam_or_vid'] == False:
     if 'cam_index' not in st.session_state or st.session_state['cam_index'] == None:
         # display an error
         st.error("Please select a camera index in settings")
-        source = None
+        stream_path = None
 
     # if the webcam index is in the session state and is not NULL
     else:
-        # set the source to the webcam index
-        source = st.session_state['cam_index']
+        # set the stream_path to the webcam index
+        stream_path = st.session_state['cam_index']
 
 # if selected video file
 else:
@@ -574,21 +577,35 @@ else:
     if 'file_path' not in st.session_state or st.session_state['file_path'] == None:
         # display an error
         st.error("Please upload a video file in settings")
-        source = None
+        stream_path = None
 
     # if the video file path is in the session state and is not NULL
     else:
-        # set the source to the video file path
-        source = st.session_state['file_path']
+        # set the stream_path to the video file path
+        stream_path = st.session_state['file_path']
 
-# if the source is not NULL
-if source != None:
+# get the frame_skip from the session state variables
+if 'frame_skip' not in st.session_state:
+    # display an error
+    st.error("Please set the frame skip in settings")
+
+    frame_skip = None
+
+elif 'frame_skip' in st.session_state:
+    # set the frame_skip to the value in the session state
+    frame_skip = st.session_state['frame_skip']
+
+#^# SETTINGS HANDLING #^#
+#########################
+
+# if the stream_path is not NULL
+if stream_path != None:
     if st.button('Start/Stop Detection'):
         st.session_state.start_processing = not st.session_state.start_processing
 
     st.write("Processing is ", "running" if st.session_state.start_processing else "stopped")
 
-st.sidebar.write("Source: ", source) # FOR DEVELOPMENT ONLY
+st.sidebar.write("stream_path: ", stream_path) # FOR DEVELOPMENT ONLY
 
 # write the session state variables to the sidebar (navbar) for development
 st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
@@ -608,24 +625,29 @@ clear_logs() # FOR DEVELOPMENT ONLY
 
 # get the video file path
 # stream_path = 'test_files/test_vids/test_vid_7_(4k).mov'
-stream_path = source # for webcam
-frame_skip = 10 # maxes out at the fps of original video/ camera stream
+# stream_path = stream_path # REDUNDANT (can be defined in settings handling)
+
+#_# FRAME SKIP IS NOW DEFINED IN SETTINGS HANDLING #_#
+# frame_skip = frame_skip # maxes out at the fps of original video/ camera stream
 # frame_skip = 0 # no frame skipping
 
 #### CONFIGURATION  VARIABLES #####
 ###################################
 
-# create a video capture object from video stream
-stream = cv2.VideoCapture(stream_path)
+# check if the stream_path & frame_skip are not None
+if stream_path != None and frame_skip != None:
 
-# calculate the write fps
-write_fps = calc_write_fps(stream, frame_skip)
+    # create a video capture object from video stream
+    stream = cv2.VideoCapture(stream_path)
 
-# create a video writer object for development
-dev_out = create_dev_vid(stream, write_fps) # FOR DEVELOPMENT ONLY
+    # calculate the write fps
+    write_fps = calc_write_fps(stream, frame_skip)
 
-# create a empty list to hold the target vehicles that have plate detections
-target_vehicles = []
+    # create a video writer object for development
+    dev_out = create_dev_vid(stream, write_fps) # FOR DEVELOPMENT ONLY
+
+    # create a empty list to hold the target vehicles that have plate detections
+    target_vehicles = []
 
 # create a loop to go through every frame
 while st.session_state.start_processing:
@@ -652,6 +674,9 @@ while st.session_state.start_processing:
     # display the frame in the web app
     frame_placeholder.image(frame, channels="BGR", use_column_width=True)
 
-# release the video capture object
-stream.release()
-dev_out.release() # FOR DEVELOPMENT ONLY
+# if the stream is defined
+if stream_path != None:
+    
+    # release the video capture object
+    stream.release()
+    dev_out.release() # FOR DEVELOPMENT ONLY

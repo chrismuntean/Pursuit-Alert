@@ -76,7 +76,7 @@ if cam_or_vid == False:
 
     # if no webcams are found, display an error message
     if not webcams:
-        st.error("No webcams found.\nPlease connect a camera and refresh the page.")
+        st.error("No webcams found.Please connect a camera and refresh the page.")
 
     # if webcams are found, display the list of webcams in a dropdown
     else:
@@ -86,6 +86,8 @@ if cam_or_vid == False:
         # display the list of webcams as h3
         for tag in enumerate(webcam_tags):
             st.code(tag[1])
+
+    st.write('#') # SPACER
 
     webcam_option = st.selectbox(
         '##### Select stream index:',
@@ -103,7 +105,7 @@ elif cam_or_vid == True:
     st.session_state['cam_index'] = None
 
     st.session_state['cam_or_vid'] = True
-    uploaded_file = st.file_uploader("Upload a video", type=["mp4", "mov", "avi", "mkv"], 
+    uploaded_file = st.file_uploader("#### Upload a video", type=["mp4", "mov", "avi", "mkv"], 
                                      accept_multiple_files = False)
     
     # set the session state
@@ -154,6 +156,8 @@ if st.session_state['cam_or_vid'] == False:
             st.code(f'Input FPS: {frame_rate}')
             st.code(f'Input resolution: {resolution}')
 
+            st.write('#') # SPACER
+
             # display the slider
             frame_skip = st.slider('#### Select frame skip:', min_value = 0, max_value = frame_rate, value = 10)
 
@@ -176,8 +180,13 @@ elif st.session_state['cam_or_vid'] == True:
 
         # try opening the video file
         # if the video file is not found, display an error message
-        try:
-            cap = cv2.VideoCapture(st.session_state['file_path'])
+        cap = cv2.VideoCapture(st.session_state['file_path'])
+
+        if not cap.isOpened():
+            st.error('That video file is not available. Please select another file.')
+
+        elif cap.isOpened():
+            st.success('Video file connected successfully')
 
             # get the frame rate
             frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
@@ -192,13 +201,16 @@ elif st.session_state['cam_or_vid'] == True:
             st.code(f'Input FPS: {frame_rate}')
             st.code(f'Input resolution: {resolution}')            
 
+            st.write('#') # SPACER
+
             # display the slider
-            frame_rate = st.slider('Select frame rate:', min_value=1, max_value=30, value=15)
-        
-        except:
-            
-            # display a generic error message
-            st.error('An error occurred while trying to access the video file')
+            frame_rate = st.slider('#### Select frame rate:', min_value = 0, max_value = frame_rate, value=10)
+
+            # set the session state for the frame rate
+            st.session_state['frame_skip'] = frame_rate
+
+            # release the video file
+            cap.release()
 
     else:
         st.error('Please upload a video file')
