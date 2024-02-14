@@ -637,29 +637,30 @@ if stream_path != None and frame_skip != None:
     target_vehicles = []
 
 # create a loop to go through every frame
-while st.session_state.start_processing:
+with st.status('ALPR active' if st.session_state.start_processing else 'ALPR stopped'):
+    while st.session_state.start_processing:
+                
+        # set the frame_skip on the video stream
+        stream.set(cv2.CAP_PROP_POS_FRAMES, stream.get(cv2.CAP_PROP_POS_FRAMES) + frame_skip)
 
-    # set the frame_skip on the video stream
-    stream.set(cv2.CAP_PROP_POS_FRAMES, stream.get(cv2.CAP_PROP_POS_FRAMES) + frame_skip)
+        # get the frame
+        ret, frame = stream.read()
+        
+        # if the frame is empty (the video is over), break the loop
+        if not ret:
+            break
 
-    # get the frame
-    ret, frame = stream.read()
-    
-    # if the frame is empty (the video is over), break the loop
-    if not ret:
-        break
+        # start the ALPR process
+        # detect_vehicles() -> detect_plate() -> detect_chars()
+        detect_vehicles(frame, stream)
 
-    # start the ALPR process
-    # detect_vehicles() -> detect_plate() -> detect_chars()
-    detect_vehicles(frame, stream)
+        # save the frame as current_frame.jpg
+        cv2.imwrite("frames/current_frame.jpg", frame)
+        
+        dev_out.write(frame) # FOR DEVELOPMENT ONLY
 
-    # save the frame as current_frame.jpg
-    cv2.imwrite("frames/current_frame.jpg", frame)
-    
-    dev_out.write(frame) # FOR DEVELOPMENT ONLY
-
-    # display the frame in the web app
-    frame_placeholder.image(frame, channels="BGR", use_column_width=True)
+        # display the frame in the web app
+        frame_placeholder.image(frame, channels="BGR", use_column_width=True)
 
 # if the stream is defined
 if stream_path != None:
