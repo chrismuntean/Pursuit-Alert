@@ -540,7 +540,9 @@ def detect_vehicles(frame, stream):
         # the detect_plate() function will continue the process to char detection
         detect_plate(veh_crop, veh_plot, veh_id, stream)
 #^# ALPR functions #^#
-        
+
+#########################
+#########################
 #_# Web app functions #_#
 if 'start_processing' not in st.session_state:
     st.session_state.start_processing = False
@@ -612,27 +614,12 @@ st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
 st.sidebar.write(st.session_state) # FOR DEVELOPMENT ONLY
 
 #^# Web app functions #^#
+#########################
+#########################
 
-############################
-############################
-############################
 
 # start by clearing the logs
 clear_logs() # FOR DEVELOPMENT ONLY
-
-###################################
-#### CONFIGURATION  VARIABLES #####
-
-# get the video file path
-# stream_path = 'test_files/test_vids/test_vid_7_(4k).mov'
-# stream_path = stream_path # REDUNDANT (can be defined in settings handling)
-
-#_# FRAME SKIP IS NOW DEFINED IN SETTINGS HANDLING #_#
-# frame_skip = frame_skip # maxes out at the fps of original video/ camera stream
-# frame_skip = 0 # no frame skipping
-
-#### CONFIGURATION  VARIABLES #####
-###################################
 
 # check if the stream_path & frame_skip are not None
 if stream_path != None and frame_skip != None:
