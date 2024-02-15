@@ -549,6 +549,8 @@ if 'start_processing' not in st.session_state:
 
 st.header("Pursuit Alert", divider = 'gray')
 
+ALPR_status = st.status("ALPR inactive", state='error')
+
 frame_placeholder = st.empty()
 
 #_# SETTINGS HANDLING #_#
@@ -563,9 +565,11 @@ if st.session_state['cam_or_vid'] == False:
 
     # check if the webcam index is not in the session state or if it is NULL
     if 'cam_index' not in st.session_state or st.session_state['cam_index'] == None:
-        # display an error
-        st.error("Please select a camera index in settings")
-        stream_path = None
+
+        with ALPR_status:
+            # display an error
+            st.error("Please select a camera index in settings")
+            stream_path = None
 
     # if the webcam index is in the session state and is not NULL
     else:
@@ -577,9 +581,11 @@ else:
 
     # check if the video file path is not in the session state or if it is NULL
     if 'file_path' not in st.session_state or st.session_state['file_path'] == None:
-        # display an error
-        st.error("Please upload a video file in settings")
-        stream_path = None
+
+        with ALPR_status:
+            # display an error
+            st.error("Please upload a video file in settings")
+            stream_path = None
 
     # if the video file path is in the session state and is not NULL
     else:
@@ -587,11 +593,13 @@ else:
         stream_path = st.session_state['file_path']
 
 # get the frame_skip from the session state variables
+# displaying the error message is redundanct because it's default value is set in the settings
 if 'frame_skip' not in st.session_state:
-    # display an error
-    st.error("Please set the frame skip in settings")
 
-    frame_skip = None
+    with ALPR_status:
+        # display an error
+        st.error("Please set the frame skip in settings")
+        frame_skip = None
 
 elif 'frame_skip' in st.session_state:
     # set the frame_skip to the value in the session state
@@ -600,14 +608,7 @@ elif 'frame_skip' in st.session_state:
 #^# SETTINGS HANDLING #^#
 #########################
 
-# if the stream_path is not NULL
-if stream_path != None:
-    if st.button('Start/Stop Detection'):
-        st.session_state.start_processing = not st.session_state.start_processing
-
-    st.write("Processing is ", "running" if st.session_state.start_processing else "stopped")
-
-st.sidebar.write("stream_path: ", stream_path) # FOR DEVELOPMENT ONLY
+st.sidebar.code("stream_path: ", stream_path) # FOR DEVELOPMENT ONLY
 
 # write the session state variables to the sidebar (navbar) for development
 st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
@@ -624,6 +625,9 @@ clear_logs() # FOR DEVELOPMENT ONLY
 # check if the stream_path & frame_skip are not None
 if stream_path != None and frame_skip != None:
 
+    # start the ALPR process
+    st.session_state.start_processing = True
+
     # create a video capture object from video stream
     stream = cv2.VideoCapture(stream_path)
 
@@ -637,30 +641,31 @@ if stream_path != None and frame_skip != None:
     target_vehicles = []
 
 # create a loop to go through every frame
-with st.status('ALPR active' if st.session_state.start_processing else 'ALPR stopped'):
-    while st.session_state.start_processing:
-                
-        # set the frame_skip on the video stream
-        stream.set(cv2.CAP_PROP_POS_FRAMES, stream.get(cv2.CAP_PROP_POS_FRAMES) + frame_skip)
+while st.session_state.start_processing:
+            
+    # set the frame_skip on the video stream
+    stream.set(cv2.CAP_PROP_POS_FRAMES, stream.get(cv2.CAP_PROP_POS_FRAMES) + frame_skip)
 
-        # get the frame
-        ret, frame = stream.read()
-        
-        # if the frame is empty (the video is over), break the loop
-        if not ret:
-            break
+    # get the frame
+    ret, frame = stream.read()
+    
+    # if the frame is empty (the video is over), break the loop
+    if not ret:
+        break
 
-        # start the ALPR process
-        # detect_vehicles() -> detect_plate() -> detect_chars()
+    # start the ALPR process
+    # detect_vehicles() -> detect_plate() -> detect_chars()
+    with ALPR_status as status:
+        status.update(label = "ALPR active", state = 'running')
         detect_vehicles(frame, stream)
 
-        # save the frame as current_frame.jpg
-        cv2.imwrite("frames/current_frame.jpg", frame)
-        
-        dev_out.write(frame) # FOR DEVELOPMENT ONLY
+    # save the frame as current_frame.jpg
+    cv2.imwrite("frames/current_frame.jpg", frame)
+    
+    dev_out.write(frame) # FOR DEVELOPMENT ONLY
 
-        # display the frame in the web app
-        frame_placeholder.image(frame, channels="BGR", use_column_width=True)
+    # display the frame in the web app
+    frame_placeholder.image(frame, channels="BGR", use_column_width=True)
 
 # if the stream is defined
 if stream_path != None:

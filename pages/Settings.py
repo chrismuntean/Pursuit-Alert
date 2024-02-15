@@ -204,7 +204,7 @@ elif st.session_state['cam_or_vid'] == True:
             st.write('#') # SPACER
 
             # display the slider
-            frame_rate = st.slider('#### Select frame rate:', min_value = 0, max_value = frame_rate, value=10)
+            frame_rate = st.slider('#### Select frame skip:', min_value = 0, max_value = frame_rate, value=10)
 
             # set the session state for the frame rate
             st.session_state['frame_skip'] = frame_rate
