@@ -1,7 +1,6 @@
 import re
 import subprocess
 import streamlit as st
-import pandas as pd
 import tempfile
 import cv2
 
