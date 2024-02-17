@@ -651,12 +651,21 @@ while st.session_state.start_processing:
     
     # if the frame is empty (the video is over), break the loop
     if not ret:
+        st.session_state.start_processing = False
+
+        # update the ALPR status to stopped
+        with ALPR_status as status:
+            st.error("Stream interupted or ended")
+            status.update(label = "ALPR inactive", state = 'error')
+
+        # break the while loop
         break
 
     # start the ALPR process
-    # detect_vehicles() -> detect_plate() -> detect_chars()
     with ALPR_status as status:
         status.update(label = "ALPR active", state = 'running')
+
+        # detect_vehicles() -> detect_plate() -> detect_chars()
         detect_vehicles(frame, stream)
 
     # save the frame as current_frame.jpg
