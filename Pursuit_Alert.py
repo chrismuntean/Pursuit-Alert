@@ -239,6 +239,10 @@ def create_perm_log(veh_id, vid, write_fps):
 #_# ALPR functions #_#
 def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
 
+    # update the ALPR_status to "Detecting characters"
+    with ALPR_status as status:
+        status.update(label = "Detecting characters...", state = 'running')
+
     # run the cropped image through the character detector
     # only detect numbers 0-9 and letters A-Z
     character_results = character_detector.readtext(plate_crop, allowlist="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ") # allow multiple string detections per frame
@@ -377,6 +381,10 @@ def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
 
 def detect_plate(veh_crop, veh_plot, veh_id, stream):
 
+    # update ALPR_status to "Detecting Plates"
+    with ALPR_status as status:
+        status.update(label = "Detecting plate area(s)...", state = 'running')
+
     # run the cropped image through the license plate detector
     plate_results = plate_detector(veh_crop, classes=0) # allow multiple plate detections per frame
 
@@ -438,6 +446,10 @@ def detect_plate(veh_crop, veh_plot, veh_id, stream):
         detect_chars(plate_crop, plate_plot, veh_plot, veh_id)
 
 def detect_vehicles(frame, stream):
+
+    # update ALPR_status to "Detecting Vehicles"
+    with ALPR_status as status:
+        status.update(label = "Detecting vehicle(s)...", state = 'running')
 
     # detect the vehicle (veh) in the frame
     # use classes 2 (car), 3 (motorcycle), 5, (bus), and 7 (truck)
