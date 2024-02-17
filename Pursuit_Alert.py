@@ -289,6 +289,9 @@ def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
         # print out the voted plate string and the vote count (number of plates detected)
         print(Fore.MAGENTA + "\nVoted Plate: " + voted_plate + " (" + str(num_plates) + ")" + Style.RESET_ALL)
 
+        # display the voted plate string and the vote count (number of plates detected) in the status widget
+        voted_string_status.code("Voted Plate: " + voted_plate + " (" + str(num_plates) + ")")
+
         # add the voted plate string to the plate area label
         cv2.putText(frame, "Voted: " + voted_plate + " (" + str(num_plates) + ")", (int(plate_plot[0]) + int(veh_plot[0]), int(plate_plot[1]) - 60 + int(veh_plot[1])), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
 
@@ -313,8 +316,10 @@ def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
             print(Fore.YELLOW + "\nActive Plate: " + characters + " [" + confidence + "%]" + Style.RESET_ALL) # yellow
         elif len(characters) > 0:
             print(Fore.LIGHTRED_EX + "\nActive Plate: " + characters + " [" + confidence + "%]" + Style.RESET_ALL) # red
-
         # print("Active Plate: " + characters + " [" + confidence + "%]")
+
+        # display the active plate string and confidence score in the status widget
+        active_string_status.code("Active Plate: " + characters + " [" + confidence + "%]")
 
         # get the coordinates of the bounding box
         x1, y1, x2, y2 = int(character[0][0][0]), int(character[0][0][1]), int(character[0][2][0]), int(character[0][2][1])
@@ -444,6 +449,9 @@ def detect_vehicles(frame, stream):
     # print the veh ids to the console
     print("\nTarget Vehicle IDs: " + str(target_vehicles))
     print("Active Vehicle IDs: " + str(all_veh_ids))
+
+    # display the veh ids in the status widget
+    voted_active_status.code("Target IDs: " + str(target_vehicles) + "\nActive IDs: " + str(all_veh_ids))
 
     # loop through the target vehicles
     for veh_id in target_vehicles:
@@ -628,6 +636,17 @@ if stream_path != None and frame_skip != None:
     # start the ALPR process
     st.session_state.start_processing = True
 
+    with ALPR_status:
+        frame_col_status, console_col_status = st.columns([3, 2])
+
+        # create an empty placeholder for the frame (in the first column)
+        frame_col_status = frame_col_status.empty()
+
+        # create an empty placeholder for the voted and active vehicle IDs (in the second column)
+        voted_active_status = console_col_status.empty()
+        voted_string_status = console_col_status.empty()
+        active_string_status = console_col_status.empty()
+
     # create a video capture object from video stream
     stream = cv2.VideoCapture(stream_path)
 
@@ -674,7 +693,7 @@ while st.session_state.start_processing:
     dev_out.write(frame) # FOR DEVELOPMENT ONLY
 
     # display the frame in the web app
-    frame_placeholder.image(frame, channels="BGR", use_column_width=True)
+    frame_col_status.image(frame, channels="BGR", use_column_width=True)
 
 # if the stream is defined
 if stream_path != None:
