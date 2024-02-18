@@ -9,10 +9,15 @@ from colorama import Fore, Back, Style
 import uuid
 import streamlit as st
 
+import pandas as pd
+import random
+
 # initialize models
-vehicle_detector = YOLO('models/yolov8n.pt') # object detection
-plate_detector = YOLO('models/license_plate.pt') # object detection
-character_detector = easyocr.Reader(['en']) # optical character recognition
+def init_models():
+    global vehicle_detector, plate_detector, character_detector
+    vehicle_detector = YOLO('models/yolov8n.pt') # object detection
+    plate_detector = YOLO('models/license_plate.pt') # object detection
+    character_detector = easyocr.Reader(['en']) # optical character recognition
 
 def calc_write_fps(stream, frame_skip):
 
@@ -235,6 +240,12 @@ def create_perm_log(veh_id, vid, write_fps):
 
     # delete the tmp folder for the vehicle 
     os.system("rm -rf logs/tmp/Vehicle_" + str(veh_id))
+
+    # re-run the display_data() function to update the perm log list
+    with ALPR_status as status:
+        status.update(label = "Updating dataframe...", state = 'running')
+        
+        display_dataframe()
 
 #_# ALPR functions #_#
 def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
@@ -632,6 +643,63 @@ st.sidebar.code("stream_path: ", stream_path) # FOR DEVELOPMENT ONLY
 st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
 st.sidebar.write(st.session_state) # FOR DEVELOPMENT ONLY
 
+#_# DISPLAY AND CALCULATE DATA #_#
+##################################
+
+# title
+st.write("### All Plates")
+
+# create an empty dataframe object
+all_plates_dataframe = st.empty()
+
+def display_dataframe():
+
+    # check if the all_plates.json file exists
+    if os.path.exists("logs/perm/all_plates.json"):
+
+        # get the all_plates.json file
+        with open("logs/perm/all_plates.json", "r") as file:
+            all_plates = json.load(file)
+
+        # Create a DataFrame directly from the all_plates data
+        data = []
+
+        for plate, detections in all_plates.items():
+
+            data.append({
+                "plate": plate,
+                "detection_count": str(len(detections)), # Convert to str to align left
+                "first_seen": detections[0]["date"] + " " + detections[0]["time"],
+                "last_seen": detections[-1]["date"] + " " + detections[-1]["time"],
+                "risk": "High" if len(detections) > 5 else "Low"
+            })
+
+        df = pd.DataFrame(data)
+
+        # Display the DataFrame using a custom configuration
+        all_plates_dataframe.dataframe(
+            df,
+            column_config={
+                "plate": "Plate",
+                "detection_count": "Sightings",
+                "first_seen": "First Seen",
+                "last_seen": "Last Seen",
+                "risk": "Risk"
+            },
+
+            hide_index=True,
+            use_container_width=True
+        )
+
+    else:
+        # if the all_plates.json file does not exist, display an error
+        st.error("No plates detected yet")
+
+display_dataframe()
+
+#^# DISPLAY AND CALCULATE DATA #^#
+##################################
+
 #^# Web app functions #^#
 #########################
 #########################
@@ -647,7 +715,7 @@ if stream_path != None and frame_skip != None:
     st.session_state.start_processing = True
 
     with ALPR_status as status:
-        status.update(label = "ALPR active", state = 'running')
+        status.update(label = "ALPR starting...", state = 'running')
 
         frame_col_status, console_col_status = st.columns([3, 2])
 
@@ -659,17 +727,22 @@ if stream_path != None and frame_skip != None:
         voted_string_status = console_col_status.empty()
         active_string_status = console_col_status.empty()
 
-    # create a video capture object from video stream
-    stream = cv2.VideoCapture(stream_path)
+        # create a video capture object from video stream
+        stream = cv2.VideoCapture(stream_path)
 
-    # calculate the write fps
-    write_fps = calc_write_fps(stream, frame_skip)
+        # calculate the write fps
+        write_fps = calc_write_fps(stream, frame_skip)
 
-    # create a video writer object for development
-    dev_out = create_dev_vid(stream, write_fps) # FOR DEVELOPMENT ONLY
+        # create a video writer object for development
+        dev_out = create_dev_vid(stream, write_fps) # FOR DEVELOPMENT ONLY
 
-    # create a empty list to hold the target vehicles that have plate detections
-    target_vehicles = []
+        # create a empty list to hold the target vehicles that have plate detections
+        target_vehicles = []
+
+    with ALPR_status as status:
+        status.update(label = "Initializing models...", state = 'running')
+
+        init_models()
 
 # create a loop to go through every frame
 while st.session_state.start_processing:
