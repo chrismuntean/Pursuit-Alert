@@ -15,6 +15,7 @@ import random
 # initialize models
 def init_models():
     global vehicle_detector, plate_detector, character_detector
+
     vehicle_detector = YOLO('models/yolov8n.pt') # object detection
     plate_detector = YOLO('models/license_plate.pt') # object detection
     character_detector = easyocr.Reader(['en']) # optical character recognition
@@ -578,7 +579,7 @@ def detect_vehicles(frame, stream):
 if 'start_processing' not in st.session_state:
     st.session_state.start_processing = False
 
-st.header("Pursuit Alert", divider = 'gray')
+st.header("Pursuit Alert - All Plates", divider = 'gray')
 
 ALPR_status = st.status("ALPR inactive", state='error')
 
@@ -645,9 +646,6 @@ st.sidebar.write(st.session_state) # FOR DEVELOPMENT ONLY
 
 #_# DISPLAY AND CALCULATE DATA #_#
 ##################################
-
-# title
-st.write("### All Plates")
 
 # create an empty dataframe object
 all_plates_dataframe = st.empty()
