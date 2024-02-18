@@ -239,10 +239,6 @@ def create_perm_log(veh_id, vid, write_fps):
 #_# ALPR functions #_#
 def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
 
-    # update the ALPR_status to "Detecting characters"
-    with ALPR_status as status:
-        status.update(label = "Detecting characters...", state = 'running')
-
     # run the cropped image through the character detector
     # only detect numbers 0-9 and letters A-Z
     character_results = character_detector.readtext(plate_crop, allowlist="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ") # allow multiple string detections per frame
@@ -381,10 +377,6 @@ def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
 
 def detect_plate(veh_crop, veh_plot, veh_id, stream):
 
-    # update ALPR_status to "Detecting Plates"
-    with ALPR_status as status:
-        status.update(label = "Detecting plate area(s)...", state = 'running')
-
     # run the cropped image through the license plate detector
     plate_results = plate_detector(veh_crop, classes=0) # allow multiple plate detections per frame
 
@@ -441,15 +433,15 @@ def detect_plate(veh_crop, veh_plot, veh_id, stream):
         
         ############################
 
-        # then run the cropped image through the character detector
-        # the detect_chars() function will also draw the plate area data (with different colors depending on char results)
-        detect_chars(plate_crop, plate_plot, veh_plot, veh_id)
+        # update ALPR_status
+        with ALPR_status as status:
+            status.update(label = "Detecting characters...", state = 'running')
+
+            # then run the cropped image through the character detector
+            # the detect_chars() function will also draw the plate area data (with different colors depending on char results)
+            detect_chars(plate_crop, plate_plot, veh_plot, veh_id)
 
 def detect_vehicles(frame, stream):
-
-    # update ALPR_status to "Detecting Vehicles"
-    with ALPR_status as status:
-        status.update(label = "Detecting vehicle(s)...", state = 'running')
 
     # detect the vehicle (veh) in the frame
     # use classes 2 (car), 3 (motorcycle), 5, (bus), and 7 (truck)
@@ -471,7 +463,11 @@ def detect_vehicles(frame, stream):
         if veh_id not in all_veh_ids:
             # remove the vehicle ID from the target list and execute the create_perm_log() function for that vehicle
             target_vehicles.remove(veh_id)
-            create_perm_log(veh_id, stream, write_fps)
+
+            # update the ALPR_status
+            with ALPR_status as status:
+                status.update(label = "Creating permanent log...", state = 'running')
+                create_perm_log(veh_id, stream, write_fps)
 
     # if there are vehicles detected, get the bounding box coordinates of each veh detected by looping through each array
     for index, veh_plot in enumerate(veh_results[0].boxes.data):
@@ -556,9 +552,13 @@ def detect_vehicles(frame, stream):
 
         ############################
 
-        # run the cropped image through the license plate detector
-        # the detect_plate() function will continue the process to char detection
-        detect_plate(veh_crop, veh_plot, veh_id, stream)
+        # update the ALPR_status
+        with ALPR_status as status:
+            status.update(label = "Detecting plate area(s)...", state = 'running')
+
+            # run the cropped image through the license plate detector
+            # the detect_plate() function will continue the process to char detection
+            detect_plate(veh_crop, veh_plot, veh_id, stream)
 #^# ALPR functions #^#
 
 #########################
@@ -648,7 +648,9 @@ if stream_path != None and frame_skip != None:
     # start the ALPR process
     st.session_state.start_processing = True
 
-    with ALPR_status:
+    with ALPR_status as status:
+        status.update(label = "ALPR active", state = 'running')
+
         frame_col_status, console_col_status = st.columns([3, 2])
 
         # create an empty placeholder for the frame (in the first column)
@@ -673,12 +675,17 @@ if stream_path != None and frame_skip != None:
 
 # create a loop to go through every frame
 while st.session_state.start_processing:
-            
-    # set the frame_skip on the video stream
-    stream.set(cv2.CAP_PROP_POS_FRAMES, stream.get(cv2.CAP_PROP_POS_FRAMES) + frame_skip)
+    
+    with ALPR_status as status:
 
-    # get the frame
-    ret, frame = stream.read()
+        # update the ALPR status to running
+        status.update(label = "Reading next frame...", state = 'running')
+
+        # set the frame_skip on the video stream
+        stream.set(cv2.CAP_PROP_POS_FRAMES, stream.get(cv2.CAP_PROP_POS_FRAMES) + frame_skip)
+
+        # get the frame
+        ret, frame = stream.read()
     
     # if the frame is empty (the video is over), break the loop
     if not ret:
@@ -694,18 +701,21 @@ while st.session_state.start_processing:
 
     # start the ALPR process
     with ALPR_status as status:
-        status.update(label = "ALPR active", state = 'running')
+        status.update(label = "Detecting vehicle(s)...", state = 'running')
 
         # detect_vehicles() -> detect_plate() -> detect_chars()
         detect_vehicles(frame, stream)
 
-    # save the frame as current_frame.jpg
-    cv2.imwrite("frames/current_frame.jpg", frame)
-    
-    dev_out.write(frame) # FOR DEVELOPMENT ONLY
+    with ALPR_status as status:
+        status.update(label = "Writing frame data...", state = 'running')
 
-    # display the frame in the web app
-    frame_col_status.image(frame, channels="BGR", use_column_width=True)
+        # save the frame as current_frame.jpg
+        cv2.imwrite("frames/current_frame.jpg", frame)
+        
+        dev_out.write(frame) # FOR DEVELOPMENT ONLY
+
+        # display the frame in the web app
+        frame_col_status.image(frame, channels="BGR", use_column_width=True)
 
 # if the stream is defined
 if stream_path != None:
