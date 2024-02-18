@@ -571,8 +571,6 @@ st.header("Pursuit Alert", divider = 'gray')
 
 ALPR_status = st.status("ALPR inactive", state='error')
 
-frame_placeholder = st.empty()
-
 #_# SETTINGS HANDLING #_#
 #########################
 
@@ -640,7 +638,7 @@ st.sidebar.write(st.session_state) # FOR DEVELOPMENT ONLY
 
 
 # start by clearing the logs
-clear_logs() # FOR DEVELOPMENT ONLY
+# clear_logs() # FOR DEVELOPMENT ONLY
 
 # check if the stream_path & frame_skip are not None
 if stream_path != None and frame_skip != None:
