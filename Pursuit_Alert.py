@@ -714,6 +714,12 @@ if stream_path != None and frame_skip != None:
     st.session_state.start_processing = True
 
     with ALPR_status as status:
+        status.update(label = "Removing old tmp logs...", state = 'running')
+
+        # delete the tmp folder for the vehicle
+        os.system("rm -rf logs/tmp/*")
+
+    with ALPR_status as status:
         status.update(label = "ALPR starting...", state = 'running')
 
         frame_col_status, console_col_status = st.columns([3, 2])
