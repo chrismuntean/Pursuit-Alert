@@ -142,8 +142,15 @@ if st.session_state['cam_or_vid'] == False:
         elif cap.isOpened():
             st.success('Webcam connected successfully')
 
+            # Set the w and h to the highest possible value to use the highest resolution
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 10000)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 10000)
+
             # get the frame rate
             frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
+
+            # set the default fps to 10 if the frame rate is greater than 10
+            default_skip = 10 if frame_rate > 10 else max(1, int(frame_rate) - 1)
 
             # get the resolution from the width and height
             width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -158,7 +165,14 @@ if st.session_state['cam_or_vid'] == False:
             st.write('#') # SPACER
 
             # display the slider
-            frame_skip = st.slider('#### Select frame skip:', min_value = 0, max_value = frame_rate, value = 10)
+            frame_skip = st.slider('#### Select frame skip:', min_value = 0, max_value = frame_rate, value = default_skip)
+
+            # display an error if the user selects the max frame skip
+            if frame_skip == frame_rate:
+                st.error('The frame skip cannot be set to the maximum frame rate')
+
+                # subtract 1 from the frame skip
+                frame_skip -= 1
 
             # set the session state for the frame rate
             st.session_state['frame_skip'] = frame_skip
@@ -187,8 +201,15 @@ elif st.session_state['cam_or_vid'] == True:
         elif cap.isOpened():
             st.success('Video file connected successfully')
 
+            # Set the w and h to the highest possible value to use the highest resolution
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 10000)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 10000)
+
             # get the frame rate
             frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
+
+            # set the default fps to 10 if the frame rate is greater than 10
+            default_skip = 10 if frame_rate > 10 else max(1, int(frame_rate) - 1)
 
             # get the resolution from the width and height
             width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -203,10 +224,17 @@ elif st.session_state['cam_or_vid'] == True:
             st.write('#') # SPACER
 
             # display the slider
-            frame_rate = st.slider('#### Select frame skip:', min_value = 0, max_value = frame_rate, value=10)
+            frame_skip = st.slider('#### Select frame skip:', min_value = 0, max_value = frame_rate, value = default_skip)
+
+            # display an error if the user selects the max frame skip
+            if frame_skip == frame_rate:
+                st.error('The frame skip cannot be set to the maximum frame rate')
+
+                # subtract 1 from the frame skip
+                frame_skip -= 1
 
             # set the session state for the frame rate
-            st.session_state['frame_skip'] = frame_rate
+            st.session_state['frame_skip'] = frame_skip
 
             # release the video file
             cap.release()

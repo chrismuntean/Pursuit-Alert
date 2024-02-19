@@ -212,7 +212,7 @@ def create_perm_log(veh_id, vid, write_fps):
         all_plates = json.load(file)
 
     # Get the date and time
-    date = time.strftime("%d/%m/%Y")
+    date = time.strftime("%m/%d/%Y")
     time_now = time.strftime("%H:%M")
 
     # Add the new detection to all_plates.json
@@ -587,10 +587,10 @@ ALPR_status = st.status("ALPR inactive", state='error')
 #########################
 
 # get the stream_path from the session state variables
-# if selected webcam
 if 'cam_or_vid' not in st.session_state:
     st.session_state.cam_or_vid = False
 
+# if selected webcam
 if st.session_state['cam_or_vid'] == False:
 
     # check if the webcam index is not in the session state or if it is NULL
@@ -638,7 +638,7 @@ elif 'frame_skip' in st.session_state:
 #^# SETTINGS HANDLING #^#
 #########################
 
-st.sidebar.code("stream_path: ", stream_path) # FOR DEVELOPMENT ONLY
+st.sidebar.code("stream_path: ", str(stream_path)) # FOR DEVELOPMENT ONLY
 
 # write the session state variables to the sidebar (navbar) for development
 st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
@@ -659,7 +659,7 @@ def display_dataframe():
         with open("logs/perm/all_plates.json", "r") as file:
             all_plates = json.load(file)
 
-        # Create a DataFrame directly from the all_plates data
+        # Create a list and append the data to it
         data = []
 
         for plate, detections in all_plates.items():
@@ -672,9 +672,10 @@ def display_dataframe():
                 "risk": "High" if len(detections) > 5 else "Low"
             })
 
+        # Create a pandas DataFrame from the list
         df = pd.DataFrame(data)
 
-        # Display the DataFrame using a custom configuration
+        # Display the DataFrame using streamlit
         all_plates_dataframe.dataframe(
             df,
             column_config={
@@ -727,6 +728,10 @@ if stream_path != None and frame_skip != None:
 
         # create a video capture object from video stream
         stream = cv2.VideoCapture(stream_path)
+
+        # set the w and h to the highest possible value to use the highest resolution
+        stream.set(cv2.CAP_PROP_FRAME_WIDTH, 10000)
+        stream.set(cv2.CAP_PROP_FRAME_HEIGHT, 10000)
 
         # calculate the write fps
         write_fps = calc_write_fps(stream, frame_skip)
