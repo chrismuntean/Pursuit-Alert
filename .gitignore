@@ -8,3 +8,6 @@ frames/
 # Ignore the pycache directorys if they get created again
 __pycache__/
 pages/__pycache__/
+
+# Ignore the venv directory
+pursuit-alert-venv/
