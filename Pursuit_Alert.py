@@ -8,9 +8,7 @@ import json
 from colorama import Fore, Back, Style
 import uuid
 import streamlit as st
-
 import pandas as pd
-import random
 
 # initialize models
 def init_models():
