@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Define the path for the virtual environment and the temporary directory for pip installs
 VENV_DIR="pursuit-alert-venv"
 PIP_TMP_DIR="pip_tmp"
@@ -6,8 +8,18 @@ echo "Setting up the Python virtual environment..."
 
 # Check if Python is installed
 if ! command -v python3 &> /dev/null; then
-    echo "Python 3 is not installed. Please install it first."
-    exit 1
+    echo "Python 3 is not installed. Trying to install..."
+    sudo apt-get update && sudo apt-get install -y python3
+    if ! command -v python3 &> /dev/null; then
+        echo "Failed to install Python 3. Exiting."
+        exit 1
+    fi
+fi
+
+# Check if python3-venv is installed
+if ! python3 -m venv --help &> /dev/null; then
+    echo "python3-venv is not installed. Trying to install..."
+    sudo apt-get install -y python3-venv
 fi
 
 # Check if the virtual environment directory exists and create it if it doesn't
