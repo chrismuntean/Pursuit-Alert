@@ -37,7 +37,6 @@ if [ ! -d "$VENV_DIR" ]; then
     # Install packages from requirements.txt
     echo "Installing dependencies from requirements.txt..."
     pip install --upgrade pip
-    pip install nvidia-pyindex # Required for Nvidia packages
     pip install -r requirements.txt
 
     # Remove the custom TMPDIR
