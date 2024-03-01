@@ -16,7 +16,9 @@ def init_models():
 
     vehicle_detector = YOLO('models/yolov8n.pt') # object detection
     plate_detector = YOLO('models/license_plate.pt') # object detection
-    character_detector = easyocr.Reader(['en']) # optical character recognition
+
+    # specify model_storage_directory and download_enabled to False (to prevent downloading the model every time the script is run)
+    character_detector = easyocr.Reader(['en'], model_storage_directory="models", download_enabled=False) # optical character recognition
 
 def calc_write_fps(stream, frame_skip):
 
