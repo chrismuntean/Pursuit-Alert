@@ -7,9 +7,11 @@ WORKDIR /usr/src/app
 # Copy the current directory contents into the container
 COPY . .
 
-# Update and upgrade the system
-RUN apt-get update && apt-get upgrade -y libgl1-mesa-glx && \
-    apt-get install -y usbutils
+# Update and upgrade the system then clean up
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y usbutils libgl1-mesa-glx && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
 
