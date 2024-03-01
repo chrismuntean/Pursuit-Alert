@@ -35,15 +35,14 @@ def calc_write_fps(stream, frame_skip):
 
     return write_fps
 
-#_# FOR DEVELOPMENT ONLY #_#
-def clear_logs():
+def clear_tmp_logs():
 
-    # delete the log folder if it exists and create a new one (or if it doesn't exist)
-    if os.path.exists("logs"):
-        os.system("rm -rf logs")
-        os.makedirs("logs")
+    # delete the tmp log folder if it exists and create a new one (or if it doesn't exist)
+    if os.path.exists("logs/tmp"):
+        os.system("rm -rf logs/tmp")
+        os.makedirs("logs/tmp")
     else:
-        os.makedirs("logs")
+        os.makedirs("logs/tmp")
 
     # delete the frames folder if it exists and create a new one (or if it doesn't exist)
     if os.path.exists("frames"):
@@ -52,6 +51,7 @@ def clear_logs():
     else:
         os.makedirs("frames")
 
+#_# FOR DEVELOPMENT ONLY #_#
 def create_dev_vid(stream, write_fps):
 
     # get the frame size from the original video stream
@@ -716,8 +716,8 @@ if stream_path != None and frame_skip != None:
     with ALPR_status as status:
         status.update(label = "Removing old tmp logs...", state = 'running')
 
-        # delete the tmp folder for the vehicle
-        os.system("rm -rf logs/tmp/*")
+        # clear tmp logs
+        clear_tmp_logs()
 
     with ALPR_status as status:
         status.update(label = "ALPR starting...", state = 'running')
