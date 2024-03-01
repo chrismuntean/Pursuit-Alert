@@ -8,7 +8,9 @@ WORKDIR /usr/src/app
 COPY . .
 
 # Update and upgrade the system
-RUN apt-get update && apt-get upgrade -y libgl1-mesa-glx
+RUN apt-get update && apt-get upgrade -y libgl1-mesa-glx && \
+    apt-get install -y usbutils
+
 RUN pip install --upgrade pip
 
 # Install requirements.txt
