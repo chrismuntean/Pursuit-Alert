@@ -1,25 +1,27 @@
-# Use official Python 3 base image
-FROM python:3-slim
+# Stage 1: Build stage for installing dependencies
+FROM python:3.9-alpine AS build-env
 
-# Set the working directory in the container
+# Install build dependencies
+RUN apk add --no-cache build-base libpng-dev openblas-dev && \
+    apk add --no-cache --virtual .build-deps gcc musl-dev jpeg-dev zlib-dev
+
 WORKDIR /usr/src/app
 
-# Copy the current directory contents into the container
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Stage 2: Runtime stage for running the application
+FROM python:3.9-alpine AS runtime
+
+# Install runtime dependencies
+RUN apk add --no-cache libpng openblas && \
+    apk add --no-cache jpeg-dev zlib-dev
+
+WORKDIR /usr/src/app
+
+COPY --from=build-env /usr/local /usr/local
 COPY . .
 
-# Update and upgrade the system then clean up
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y usbutils libgl1-mesa-glx && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN pip install --upgrade pip
-
-# Install requirements.txt
-RUN pip install -r requirements.txt
-
-# Make port 8501 available to the world outside this container
 EXPOSE 8501
 
-# Run app.py when the container launches
 CMD ["streamlit", "run", "Pursuit_Alert.py"]
