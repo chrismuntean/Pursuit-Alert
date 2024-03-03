@@ -14,3 +14,6 @@ pip_tmp/
 
 # Ignore the get-reqs venv directory (for getting the requirements)
 get-reqs/
+
+# Ignore the .git directory
+.git/

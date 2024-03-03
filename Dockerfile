@@ -1,5 +1,5 @@
 # Use official Python 3 base image
-FROM python:3
+FROM python:3-slim
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
