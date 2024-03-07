@@ -58,7 +58,7 @@ def create_dev_vid(stream, write_fps):
     frame_width = int(stream.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    # Define the codec and create VideoWriter object to save the video to /logs/output.mp4
+    # Define the codec and create VideoWriter object to save the video to /logs/dev_output.mp4
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter('logs/dev_output.mp4', fourcc, write_fps, (frame_width, frame_height))
 
