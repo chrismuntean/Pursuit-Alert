@@ -14,7 +14,7 @@ import pandas as pd
 def init_models():
     global vehicle_detector, plate_detector, character_detector
 
-    vehicle_detector = YOLO('models/yolov8n.pt') # object detection
+    vehicle_detector = YOLO('models/yolov9c.pt') # object detection
     plate_detector = YOLO('models/license_plate.pt') # object detection
 
     # specify model_storage_directory and download_enabled to False (to prevent downloading the model every time the script is run)
