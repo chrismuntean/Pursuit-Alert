@@ -12,7 +12,7 @@ WORKDIR /usr/src/app
 # Install system dependencies
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends usbutils libgl1-mesa-glx libglib2.0-0 && \
+    apt-get install -y --no-install-recommends usbutils libgl1-mesa-glx libglib2.0-0 gcc g++ python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements.txt file into the image
