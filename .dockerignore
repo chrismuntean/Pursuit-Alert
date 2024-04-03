@@ -1,0 +1,20 @@
+# Ignore test_files since they are too big for GitHub
+test_files/
+
+# Ignore logs/ and frames/ since they are created based on input
+logs/
+frames/
+
+# Ignore the pycache directorys if they get created again
+__pycache__/
+pages/__pycache__/
+
+# Ignore the pip_tmp directory (for getting the requirements) and the venv dir for raw install
+pip_tmp/
+pursuit-alert-venv/
+
+# Ignore the get-reqs venv directory (for getting the requirements)
+get-reqs/
+
+# Ignore the .git directory
+.git/

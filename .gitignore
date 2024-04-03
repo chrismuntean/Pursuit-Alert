@@ -9,5 +9,9 @@ frames/
 __pycache__/
 pages/__pycache__/
 
-# Ignore the venv directory
+# Ignore the pip_tmp directory (for getting the requirements) and the venv dir for raw install
+pip_tmp/
 pursuit-alert-venv/
+
+# Ignore the get-reqs venv directory (for getting the requirements)
+get-reqs/

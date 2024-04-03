@@ -14,9 +14,11 @@ import pandas as pd
 def init_models():
     global vehicle_detector, plate_detector, character_detector
 
-    vehicle_detector = YOLO('models/yolov8n.pt') # object detection
+    vehicle_detector = YOLO('models/yolov9c.pt') # object detection
     plate_detector = YOLO('models/license_plate.pt') # object detection
-    character_detector = easyocr.Reader(['en']) # optical character recognition
+
+    # specify model_storage_directory and download_enabled to False (to prevent downloading the model every time the script is run)
+    character_detector = easyocr.Reader(['en'], model_storage_directory="models", download_enabled=False) # optical character recognition
 
 def calc_write_fps(stream, frame_skip):
 
@@ -33,15 +35,14 @@ def calc_write_fps(stream, frame_skip):
 
     return write_fps
 
-#_# FOR DEVELOPMENT ONLY #_#
-def clear_logs():
+def clear_tmp_logs():
 
-    # delete the log folder if it exists and create a new one (or if it doesn't exist)
-    if os.path.exists("logs"):
-        os.system("rm -rf logs")
-        os.makedirs("logs")
+    # delete the tmp log folder if it exists and create a new one (or if it doesn't exist)
+    if os.path.exists("logs/tmp"):
+        os.system("rm -rf logs/tmp")
+        os.makedirs("logs/tmp")
     else:
-        os.makedirs("logs")
+        os.makedirs("logs/tmp")
 
     # delete the frames folder if it exists and create a new one (or if it doesn't exist)
     if os.path.exists("frames"):
@@ -50,13 +51,14 @@ def clear_logs():
     else:
         os.makedirs("frames")
 
+#_# FOR DEVELOPMENT ONLY #_#
 def create_dev_vid(stream, write_fps):
 
     # get the frame size from the original video stream
     frame_width = int(stream.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    # Define the codec and create VideoWriter object to save the video to /logs/output.mp4
+    # Define the codec and create VideoWriter object to save the video to /logs/dev_output.mp4
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter('logs/dev_output.mp4', fourcc, write_fps, (frame_width, frame_height))
 
@@ -714,8 +716,8 @@ if stream_path != None and frame_skip != None:
     with ALPR_status as status:
         status.update(label = "Removing old tmp logs...", state = 'running')
 
-        # delete the tmp folder for the vehicle
-        os.system("rm -rf logs/tmp/*")
+        # clear tmp logs
+        clear_tmp_logs()
 
     with ALPR_status as status:
         status.update(label = "ALPR starting...", state = 'running')
