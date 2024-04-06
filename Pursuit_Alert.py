@@ -579,7 +579,7 @@ def detect_vehicles(frame, stream):
 if 'start_processing' not in st.session_state:
     st.session_state.start_processing = False
 
-st.header("Pursuit Alert - All Plates", divider = 'gray')
+st.header("Pursuit Alert", divider = 'gray')
 
 ALPR_status = st.status("ALPR inactive", state='error')
 
@@ -663,7 +663,6 @@ def display_dataframe():
         data = []
 
         for plate, detections in all_plates.items():
-
             data.append({
                 "analyze": "/Analysis?plate=" + plate,
                 "plate": plate,
