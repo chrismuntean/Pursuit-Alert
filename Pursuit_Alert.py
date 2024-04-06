@@ -665,6 +665,7 @@ def display_dataframe():
         for plate, detections in all_plates.items():
 
             data.append({
+                "analyze": "/Analysis?plate=" + plate,
                 "plate": plate,
                 "detection_count": str(len(detections)), # Convert to str to align left
                 "first_seen": detections[0]["date"] + " " + detections[0]["time"],
@@ -679,6 +680,7 @@ def display_dataframe():
         all_plates_dataframe.dataframe(
             df,
             column_config={
+                "analyze": st.column_config.LinkColumn("Analyze", display_text = "View media"),
                 "plate": "Plate",
                 "detection_count": "Sightings",
                 "first_seen": "First Seen",
