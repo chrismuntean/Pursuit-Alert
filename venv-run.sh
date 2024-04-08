@@ -51,4 +51,4 @@ fi
 
 # Start Pursuit Alert
 echo "Starting the Python application..."
-streamlit run Pursuit_Alert.py
+python -m streamlit run Pursuit_Alert.py
