@@ -16,5 +16,9 @@ pursuit-alert-venv/
 # Ignore the get-reqs venv directory (for getting the requirements)
 get-reqs/
 
+# Ignore the old Dockerfiles
+Dockerfile_(3.9-alpine-multi).txt
+Dockerfile_(slim-multi).txt
+
 # Ignore the .git directory
 .git/
