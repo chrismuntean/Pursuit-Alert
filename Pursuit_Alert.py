@@ -1,6 +1,7 @@
 import os
 import cv2
 import time
+import psutil
 from ultralytics import YOLO
 import easyocr
 from collections import Counter
@@ -8,7 +9,6 @@ import json
 from colorama import Fore, Back, Style
 import uuid
 import streamlit as st
-import pandas as pd
 
 # initialize models
 def init_models():
@@ -241,13 +241,7 @@ def create_perm_log(veh_id, vid, write_fps):
 
     # delete the tmp folder for the vehicle 
     os.system("rm -rf logs/tmp/Vehicle_" + str(veh_id))
-
-    # re-run the display_data() function to update the perm log list
-    with ALPR_status as status:
-        status.update(label = "Updating dataframe...", state = 'running')
         
-        display_dataframe()
-
 #_# ALPR functions #_#
 def detect_chars(plate_crop, plate_plot, veh_plot, veh_id):
 
@@ -581,7 +575,43 @@ if 'start_processing' not in st.session_state:
 
 st.header("Pursuit Alert", divider = 'gray')
 
-ALPR_status = st.status("ALPR inactive", state='error')
+ALPR_status = st.status("ALPR inactive", expanded = True, state='error')
+
+#_# DISPLAY RESOURCE USAGE #_#
+##############################
+
+st.subheader("Resource usage", divider = 'gray')
+
+# create placeholders for the progress bars
+cpu_progress = st.progress(0, text = "CPU usage: 0%")
+memory_progress = st.progress(0, text = "RAM usage: 0% (0 MB of 0 MB used)")
+
+def display_resources(status):
+
+    status.update(label = "Getting resource usage...", expanded = True, state = 'running')
+
+    cpu_usage_percent = psutil.cpu_percent(interval = None)
+
+    mem = psutil.virtual_memory()
+    used_mem_mb = mem.used / (1024 ** 2)  # Convert bytes to MB
+    total_memory_mb = mem.total / (1024 ** 2)  # Convert bytes to MB
+    mem_usage_percent = mem.percent
+
+    memory_usage = psutil.virtual_memory().percent
+
+    # display CPU and memory usage as progress bars
+    cpu_progress.progress(int(cpu_usage_percent), text = f"CPU usage: {cpu_usage_percent}%")
+    memory_progress.progress(int(memory_usage), text = f"RAM usage: {mem_usage_percent}% ({round(used_mem_mb)} MB of {round(total_memory_mb)} MB used)")
+
+    status.update(label = "Resource usage calculated", state = 'complete')
+
+# initialize CPU monitoring to set the baseline
+psutil.cpu_percent()
+
+display_resources(ALPR_status)
+
+#^# DISPLAY RESOURCE USAGE #^#
+##############################
 
 #_# SETTINGS HANDLING #_#
 #########################
@@ -596,8 +626,9 @@ if st.session_state['cam_or_vid'] == False:
     # check if the webcam index is not in the session state or if it is NULL
     if 'cam_index' not in st.session_state or st.session_state['cam_index'] == None:
 
-        with ALPR_status:
+        with ALPR_status as status:
             # display an error
+            status.update(label = "ALPR inactive", state = "error")
             st.error("Please select a camera index in settings")
             stream_path = None
 
@@ -612,8 +643,9 @@ else:
     # check if the video file path is not in the session state or if it is NULL
     if 'file_path' not in st.session_state or st.session_state['file_path'] == None:
 
-        with ALPR_status:
+        with ALPR_status as status:
             # display an error
+            status.update(label = "ALPR inactive", state = "error")
             st.error("Please upload a video file in settings")
             stream_path = None
 
@@ -626,8 +658,9 @@ else:
 # displaying the error message is redundanct because it's default value is set in the settings
 if 'frame_skip' not in st.session_state:
 
-    with ALPR_status:
+    with ALPR_status as status:
         # display an error
+        status.update(label = "ALPR inactive", state = "error")
         st.error("Please set the frame skip in settings")
         frame_skip = None
 
@@ -644,66 +677,9 @@ st.sidebar.code("stream_path: ", str(stream_path)) # FOR DEVELOPMENT ONLY
 st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
 st.sidebar.write(st.session_state) # FOR DEVELOPMENT ONLY
 
-#_# DISPLAY AND CALCULATE DATA #_#
-##################################
-
-# create an empty dataframe object
-all_plates_dataframe = st.empty()
-
-def display_dataframe():
-
-    # check if the all_plates.json file exists
-    if os.path.exists("logs/perm/all_plates.json"):
-
-        # get the all_plates.json file
-        with open("logs/perm/all_plates.json", "r") as file:
-            all_plates = json.load(file)
-
-        # Create a list and append the data to it
-        data = []
-
-        for plate, detections in all_plates.items():
-            data.append({
-                "analyze": "/Analysis?plate=" + plate,
-                "plate": plate,
-                "detection_count": str(len(detections)), # Convert to str to align left
-                "first_seen": detections[0]["date"] + " " + detections[0]["time"],
-                "last_seen": detections[-1]["date"] + " " + detections[-1]["time"],
-                "risk": "High" if len(detections) > 5 else "Low"
-            })
-
-        # Create a pandas DataFrame from the list
-        df = pd.DataFrame(data)
-
-        # Display the DataFrame using streamlit
-        all_plates_dataframe.dataframe(
-            df,
-            column_config={
-                "analyze": st.column_config.LinkColumn("Analyze", display_text = "View media"),
-                "plate": "Plate",
-                "detection_count": "Sightings",
-                "first_seen": "First Seen",
-                "last_seen": "Last Seen",
-                "risk": "Risk"
-            },
-
-            hide_index=True,
-            use_container_width=True
-        )
-
-    else:
-        # if the all_plates.json file does not exist, display an error
-        st.error("No plates detected yet")
-
-display_dataframe()
-
-#^# DISPLAY AND CALCULATE DATA #^#
-##################################
-
 #^# Web app functions #^#
 #########################
 #########################
-
 
 # start by clearing the logs
 # clear_logs() # FOR DEVELOPMENT ONLY
@@ -756,7 +732,12 @@ if stream_path != None and frame_skip != None:
 
 # create a loop to go through every frame
 while st.session_state.start_processing:
-    
+
+    # Re-calculate the resource usage every time a new frame is processed
+    # this is called outside the "with ALPR_status" statement to avoid including the progress bars inside the status widget
+    # the label is updated in the function itself by passing the status widget as an argument)
+    display_resources(ALPR_status)
+
     with ALPR_status as status:
 
         # update the ALPR status to running
