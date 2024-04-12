@@ -34,6 +34,9 @@ RUN apt-get update && \
 # Set the working directory in the runtime container
 WORKDIR /usr/src/app
 
+# Create a persistant volume for the logs
+VOLUME /usr/src/app/logs
+
 # Copy installed Python packages from build-env
 COPY --from=build-env /usr/local /usr/local
 
