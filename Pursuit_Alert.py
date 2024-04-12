@@ -51,20 +51,6 @@ def clear_tmp_logs():
     else:
         os.makedirs("frames")
 
-#_# FOR DEVELOPMENT ONLY #_#
-def create_dev_vid(stream, write_fps):
-
-    # get the frame size from the original video stream
-    frame_width = int(stream.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
-    # Define the codec and create VideoWriter object to save the video to /logs/dev_output.mp4
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter('logs/dev_output.mp4', fourcc, write_fps, (frame_width, frame_height))
-
-    return out
-#^# FOR DEVELOPMENT ONLY #^#
-
 def temporal_redundancy_voting(plate_strings):
 
     # Determine the maximum length of the plates
@@ -681,9 +667,6 @@ st.sidebar.write(st.session_state) # FOR DEVELOPMENT ONLY
 #########################
 #########################
 
-# start by clearing the logs
-# clear_logs() # FOR DEVELOPMENT ONLY
-
 # check if the stream_path & frame_skip are not None
 if stream_path != None and frame_skip != None:
 
@@ -718,9 +701,6 @@ if stream_path != None and frame_skip != None:
 
         # calculate the write fps
         write_fps = calc_write_fps(stream, frame_skip)
-
-        # create a video writer object for development
-        dev_out = create_dev_vid(stream, write_fps) # FOR DEVELOPMENT ONLY
 
         # create a empty list to hold the target vehicles that have plate detections
         target_vehicles = []
@@ -774,8 +754,6 @@ while st.session_state.start_processing:
         # save the frame as current_frame.jpg
         cv2.imwrite("frames/current_frame.jpg", frame)
         
-        dev_out.write(frame) # FOR DEVELOPMENT ONLY
-
         # display the frame in the web app
         frame_col_status.image(frame, channels="BGR", use_column_width=True)
 
@@ -784,4 +762,3 @@ if stream_path != None:
     
     # release the video capture object
     stream.release()
-    dev_out.release() # FOR DEVELOPMENT ONLY
