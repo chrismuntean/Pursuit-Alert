@@ -53,6 +53,9 @@ def display_dataframe():
 plate = st.query_params.get("plate")
 
 if plate != None:
+    # Write the plate number to the side bar
+    st.sidebar.code("Plate: " + plate)
+
     st.header(plate, divider = 'gray')
 
     # Get the list of times the plate was detected from /logs/perm/all_plates.json
