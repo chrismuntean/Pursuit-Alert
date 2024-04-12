@@ -24,3 +24,4 @@ venv-run.sh
 
 Dockerfile
 docker-compose.yml
+.dockerignore
