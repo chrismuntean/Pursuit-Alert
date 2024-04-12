@@ -9,7 +9,7 @@ services:
     #  platforms:
     #    - linux/amd64
     #    - linux/arm64
-    image: pursuit-alert:v0.1.0-beta # Tag specification
+    image: chrismuntean/pursuit-alert:v0.1.0-beta # Tag specification
     ports:
       - "8501:8501"
     volumes:
