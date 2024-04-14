@@ -28,7 +28,7 @@ FROM python:3-slim AS runtime
 
 # Install only the necessary system dependencies in the runtime image
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libgl1-mesa-glx libglib2.0-0 && \
+    apt-get install -y --no-install-recommends usbutils libgl1-mesa-glx libglib2.0-0 && \
     rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the runtime container

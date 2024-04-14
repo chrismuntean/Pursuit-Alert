@@ -9,7 +9,8 @@ services:
     #  platforms:
     #    - linux/amd64
     #    - linux/arm64
-    image: chrismuntean/pursuit-alert:v0.1.0-beta # Tag specification
+    image: chrismuntean/pursuit-alert:latest # Tag specification
+    privileged: true # Required for USB acces for video stream
     ports:
       - "8501:8501"
     volumes:

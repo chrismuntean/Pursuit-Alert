@@ -20,14 +20,25 @@ def display_dataframe():
             data.append({
                 "analyze": "/Analysis?plate=" + plate,
                 "plate": plate,
-                "detection_count": str(len(detections)), # Convert to str to align left
+                "detection_count": len(detections), # Keep as int for calculations
                 "first_seen": detections[0]["date"] + " " + detections[0]["time"],
                 "last_seen": detections[-1]["date"] + " " + detections[-1]["time"],
-                "risk": "High" if len(detections) > 5 else "Low"
             })
 
         # Create a pandas DataFrame from the list
         df = pd.DataFrame(data)
+
+        mean_detection_count = df['detection_count'].mean()
+        median_detection_count = df['detection_count'].median()
+
+        # Determine risk levels based on detection count and add to DataFrame
+        df['risk'] = df['detection_count'].apply(
+            lambda x: 'High' if x > median_detection_count else
+                    ('Medium' if x > mean_detection_count else 'Low')
+        )
+
+        # Convert to string to align left
+        df['detection_count'] = df['detection_count'].astype(str)
 
         # Display the DataFrame using streamlit
         all_plates_dataframe.dataframe(
@@ -94,7 +105,6 @@ if plate != None:
 
         else:
             st.error("Plate number not found in logs.")
-
 
 else:
     # No plate specified so display the default dataframe to allow the user to choose one

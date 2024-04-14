@@ -14,11 +14,10 @@ if 'cam_index' not in st.session_state:
 if 'file_path' not in st.session_state:
     st.session_state['file_path'] = None
 
-
 def list_webcams():
     # use the lsusb command to list all usb devices
     device_re = re.compile(b"Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
-    df = subprocess.check_output("lsusb", shell = True)
+    df = subprocess.check_output("lsusb", shell=True)
     
     # create an empty list to store the webcams
     devices = []
