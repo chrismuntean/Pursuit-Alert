@@ -1,8 +1,8 @@
 import os
 import pandas as pd
-
 import json
 import streamlit as st
+import time
 
 def display_dataframe():
 
@@ -60,12 +60,23 @@ def display_dataframe():
         # if the all_plates.json file does not exist, display an error
         st.error("No plates detected yet")
 
+def clear_logs():
+    with st.spinner("Refreshing..."):
+        os.system("sudo rm -rf ./logs")  # use sudo to clear perm logs where permissions are required
+        os.system("mkdir logs")
+        st.success("Logs cleared")
+        st.session_state.confirm_clear = False  # Reset the state
+
+        # wait for 1 second to display the success message
+        time.sleep(1)
+        st.rerun()  # Rerun to reflect the state reset
+
 # Check if a variable was passed in the URL query string
 plate = st.query_params.get("plate")
 
 if plate != None:
     # Write the plate number to the side bar
-    st.sidebar.code("Plate: " + plate)
+    st.sidebar.code("Plate: " + plate) # FOR DEVELOPMENT ONLY
 
     st.header(plate, divider = 'gray')
 
@@ -109,6 +120,33 @@ if plate != None:
 else:
     # No plate specified so display the default dataframe to allow the user to choose one
     st.header("Analysis", divider = 'gray')
+
+    # write the session state variables to the sidebar (navbar) for development
+    st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
+    st.sidebar.write(st.session_state) # FOR DEVELOPMENT ONLY
+
+    # Load the session state var for the clear logs button
+    if 'confirm_clear' not in st.session_state:
+        st.session_state.confirm_clear = False
+        st.rerun()  # Rerun to reflect the state reset
+
+    # Check if the clear logs btn has been clicked
+    # If false show the clear btn
+    # If true show the confirm and cancel btns
+    if not st.session_state.confirm_clear:
+        if st.button('Clear Logs', type = 'primary'):
+            st.session_state.confirm_clear = True  # Change state to show confirmation buttons
+            st.rerun()  # Rerun to reflect the state reset
+    else:
+        # Show confirmation and cancel buttons
+        confirm = st.button('Confirm')
+        cancel = st.button('Cancel', type = 'primary')
+
+        if confirm:
+            clear_logs()
+        elif cancel:
+            st.session_state.confirm_clear = False  # Reset the state without clearing logs
+            st.rerun()  # Rerun to reflect the state reset
 
     # create an empty dataframe object
     all_plates_dataframe = st.empty()
