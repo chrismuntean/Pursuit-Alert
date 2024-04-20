@@ -30,5 +30,5 @@ First grab my repo
 
 ### Technical
 * [Ultralytics YOLOv9c](https://docs.ultralytics.com/models/yolov9/) for vehicle detection
-* [License Plate Recognition LHQOW Dataset](https://duckduckgo.com) for plate area detection
+* [License Plate Recognition LHQOW Dataset](https://universe.roboflow.com/objects-in-the-wild/license-plate-recognition-lhqow) for plate area detection
 * [EasyOCR english_g2](https://github.com/JaidedAI/EasyOCR) for plate string detection
