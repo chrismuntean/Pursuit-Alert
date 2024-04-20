@@ -16,4 +16,19 @@ First grab my repo
 2. `docker compose up`
 
 ## Features
-### `v0.1.0-beta` features
+### Version: `v0.1.0-beta`
+
+### Functionality
+* Use live USB camera feed or choose to upload a video for testing
+* Frame skip definitions in settings
+* Displays what the computer vision models are seeing in the status dropdown
+* Displays resource usage bars below the status dropdown
+* Analysis page shows plate number, sighting count, first seen (date), last seen (date), risk score
+* Risk score is calculated based on mean, median, and mode of the total sightings for all plates
+* See media logs of the vehicles by selecting a plate on the Analysis page. It will return a page with dropdowns for each date & time the plate was seen along with a cropped image of the vehicle, cropped image of the plate, and a video of the vehicle driving by highlighted in red with the label "TARGET"
+* Full log clearing on Analysis page
+
+### Technical
+* [Ultralytics YOLOv9c](https://docs.ultralytics.com/models/yolov9/) for vehicle detection
+* [License Plate Recognition LHQOW Dataset](https://duckduckgo.com) for plate area detection
+* [EasyOCR english_g2](https://github.com/JaidedAI/EasyOCR) for plate string detection
