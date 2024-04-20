@@ -14,3 +14,6 @@ First grab my repo
 ### Docker installation
 1. `docker pull chrismuntean/pursuit-alert`
 2. `docker compose up`
+
+## Features
+###`v0.1.0-beta features`
