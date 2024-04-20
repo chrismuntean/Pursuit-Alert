@@ -16,4 +16,4 @@ First grab my repo
 2. `docker compose up`
 
 ## Features
-###`v0.1.0-beta features`
+### `v0.1.0-beta` features
