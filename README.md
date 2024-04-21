@@ -43,7 +43,7 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
 ## Screenshots
 I'm slacking on these give me a bit
 
-## Plans for Further Development
+## Plans for further development
 This application originated as my high school senior project. While the project served as a significant learning experience over the past year, I am currently uncertain about my ability to continue its development in the foreseeable future. However, I encourage anyone interested to build upon and expand this project. I am eager to see the innovative ways in which it can be enhanced and applied by others in the community!
 
 ## Acknowledgments
