@@ -34,3 +34,54 @@ First grab my repo
 - **Vehicle Detection**: Utilizes [Ultralytics YOLOv9c](https://docs.ultralytics.com/models/yolov9/), a state-of-the-art model for accurate vehicle detection.
 - **Plate Area Detection**: Employs the [License Plate Recognition LHQOW Dataset](https://universe.roboflow.com/objects-in-the-wild/license-plate-recognition-lhqow) to locate license plates within the video frames.
 - **Plate Recognition**: Implements [EasyOCR english_g2](https://github.com/JaidedAI/EasyOCR) for extracting alphanumeric characters from license plates, enabling accurate plate string detection.
+
+## Usage
+This software is optimized for deployment on a standalone system within a vehicle. It functions independently without an internet connection to safeguard against data leaks and to ensure full data ownership.
+
+The system is compatible with compact hardware setups such as a Raspberry Pi or an Nvidia Jetson Nano. It supports the addition of a small screen, enabling you to view real-time analysis of license plates detected on vehicles behind you.
+
+## Screenshots
+<none yet>
+
+## Plans for Further Development
+This application originated as my high school senior project. While the project served as a significant learning experience over the past year, I am currently uncertain about my ability to continue its development in the foreseeable future. However, I encourage anyone interested to build upon and expand this project. I am eager to see the innovative ways in which it can be enhanced and applied by others in the community!
+
+## Acknowledgments
+This project was built using several open-source technologies and libraries. Special thanks to the teams behind each of these tools for making them available:
+```
+@article{wang2024yolov9,
+  title={{YOLOv9}: Learning What You Want to Learn Using Programmable Gradient Information},
+  author={Wang, Chien-Yao  and Liao, Hong-Yuan Mark},
+  booktitle={arXiv preprint arXiv:2402.13616},
+  year={2024}
+}
+
+@misc{
+    license-plate-recognition-lhqow_dataset,
+    title = { License Plate Recognition  Dataset },
+    type = { Open Source Dataset },
+    author = { Objects In The Wild },
+    howpublished = { \url{ https://universe.roboflow.com/objects-in-the-wild/license-plate-recognition-lhqow } },
+    url = { https://universe.roboflow.com/objects-in-the-wild/license-plate-recognition-lhqow },
+    journal = { Roboflow Universe },
+    publisher = { Roboflow },
+    year = { 2022 },
+    month = { jun },
+    note = { visited on 2024-04-20 },
+}
+
+@misc{
+    easyocr,
+    title = { EasyOCR },
+    type = { Open Source Software },
+    author = { Jaided AI },
+    howpublished = { \url{https://github.com/JaidedAI/EasyOCR} },
+    url = { https://github.com/JaidedAI/EasyOCR },
+    year = { 2020 },
+    note = { visited on 2024-04-20 },
+}
+```
+I am grateful to all the developers and contributors of these projects.
+
+## License
+Do whatever you want with my code. I don't care
