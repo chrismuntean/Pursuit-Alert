@@ -1,5 +1,6 @@
 # Pursuit Alert
 ### Counter surveillance system that detects vehicles that may be following you using ALPR. Designed simply with open source projects.
+![Docker Pulls](https://img.shields.io/docker/pulls/chrismuntean/pursuit-alert.svg)
 
 ## Installation
 First grab my repo
