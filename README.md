@@ -41,7 +41,7 @@ This software is optimized for deployment on a standalone system within a vehicl
 The system is compatible with compact hardware setups such as a Raspberry Pi or an Nvidia Jetson Nano. It supports the addition of a small screen, enabling you to view real-time analysis of license plates detected on vehicles behind you.
 
 ## Screenshots
-<none yet>
+I'm slacking on these give me a bit
 
 ## Plans for Further Development
 This application originated as my high school senior project. While the project served as a significant learning experience over the past year, I am currently uncertain about my ability to continue its development in the foreseeable future. However, I encourage anyone interested to build upon and expand this project. I am eager to see the innovative ways in which it can be enhanced and applied by others in the community!
