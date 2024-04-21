@@ -51,8 +51,8 @@ Throughout my high school senior project, I was required to maintain detailed da
 
 If you are interested in exploring these entries and witnessing the evolution of the project firsthand, you can access my Notion calendar containing all the notes. However, please be aware that this link may no longer be active at the time you try to access it. After my graduation, my high school will deactivate my school Google account, which could result in the deletion of these records.
 
-You can attempt to access the development logs here: [Muntean Chris's Development Logs](https://sparktechsolutions.notion.site/Muntean-Chris-40f87992478c47c99e366a3a97577a01)
-
+You can attempt to access the development logs here: [Chris Muntean's Development Logs](https://sparktechsolutions.notion.site/Muntean-Chris-40f87992478c47c99e366a3a97577a01)
+**See September 2023 - April 2024**
 
 ## Acknowledgments
 This project was built using several open-source technologies and libraries. Special thanks to the teams behind each of these tools for making them available:
