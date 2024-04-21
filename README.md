@@ -58,7 +58,7 @@ This section presents a diagram that outlines the core functionalities of the au
 
 The diagram below does not include aspects that are primarily aesthetic, such as the settings interface, CPU and RAM usage statistics, and the Analysis user interface, which are designed for user interaction and system monitoring rather than core functionality.
 
-![ALPR System Diagram](ALPR-system.png)
+![ALPR System Diagram](ALPR-system.drawio.png)
 
 ## Plans for further development
 This application originated as my high school senior project. While the project served as a significant learning experience over the past year, I am currently uncertain about my ability to continue its development in the foreseeable future. However, I encourage anyone interested to build upon and expand this project. I am eager to see the innovative ways in which it can be enhanced and applied by others in the community!
