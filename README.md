@@ -16,8 +16,7 @@ First grab my repo
 2. `docker compose up`
 
 ## Features
-### Version
-Current version: `v0.1.0-beta`
+### Current version: `v0.1.0-beta`
 
 ### Functionality Overview
 - **Video Input Options**: Utilize a live USB camera feed or upload a pre-recorded video for analysis.
