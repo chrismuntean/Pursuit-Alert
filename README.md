@@ -16,19 +16,22 @@ First grab my repo
 2. `docker compose up`
 
 ## Features
-### Version: `v0.1.0-beta`
+### Version
+Current version: `v0.1.0-beta`
 
-### Functionality
-* Use live USB camera feed or choose to upload a video for testing
-* Frame skip definitions in settings
-* Displays what the computer vision models are seeing in the status dropdown
-* Displays resource usage bars below the status dropdown
-* Analysis page shows plate number, sighting count, first seen (date), last seen (date), risk score
-* Risk score is calculated based on mean, median, and mode of the total sightings for all plates
-* See media logs of the vehicles by selecting a plate on the Analysis page. It will return a page with dropdowns for each date & time the plate was seen along with a cropped image of the vehicle, cropped image of the plate, and a video of the vehicle driving by highlighted in red with the label "TARGET"
-* Full log clearing on Analysis page
+### Functionality Overview
+- **Video Input Options**: Utilize a live USB camera feed or upload a pre-recorded video for analysis.
+- **Frame Skipping**: Define frame skip settings to optimize processing.
+- **Visual Feedback**: 
+  - The status dropdown displays outputs from the computer vision models.
+  - Resource usage is shown through bars located below the status dropdown.
+- **Analysis Tools**:
+  - Displays vehicle details such as plate number, sighting count, first and last sighting dates, and a calculated risk score.
+  - Risk score calculation is based on the mean, median, and mode of total sightings across all observed plates.
+  - Media logs for each vehicle can be accessed by selecting a plate on the Analysis page, featuring dropdowns for each sighting date and time, along with a cropped image of the vehicle and plate, and a video highlighting the vehicle in red labeled as "TARGET".
+- **Data Management**: Offers an option to clear all logs on the Analysis page for privacy and system performance.
 
-### Technical
-* [Ultralytics YOLOv9c](https://docs.ultralytics.com/models/yolov9/) for vehicle detection
-* [License Plate Recognition LHQOW Dataset](https://universe.roboflow.com/objects-in-the-wild/license-plate-recognition-lhqow) for plate area detection
-* [EasyOCR english_g2](https://github.com/JaidedAI/EasyOCR) for plate string detection
+### Technical Specifications
+- **Vehicle Detection**: Utilizes [Ultralytics YOLOv9c](https://docs.ultralytics.com/models/yolov9/), a state-of-the-art model for accurate vehicle detection.
+- **Plate Area Detection**: Employs the [License Plate Recognition LHQOW Dataset](https://universe.roboflow.com/objects-in-the-wild/license-plate-recognition-lhqow) to locate license plates within the video frames.
+- **Plate Recognition**: Implements [EasyOCR english_g2](https://github.com/JaidedAI/EasyOCR) for extracting alphanumeric characters from license plates, enabling detailed plate string detection.
