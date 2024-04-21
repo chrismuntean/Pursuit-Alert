@@ -54,38 +54,9 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
 I'm slacking on these give me a bit
 
 ## How It Works
+This section is a diagram of the operation of the code, including configuration settings, tolerances, and logging procedures.
 
-This section details the operation of the code, including configuration settings, tolerances, and logging procedures.
-
-### Initialization
-- **Video Input**: The process begins by capturing the first frame from a video file or camera stream.
-- **Frame Skipping**: We process every Xth frame from the stream, where X is defined by the frame skip variable.
-
-### Vehicle Detection
-- **YOLOv9c Model**: This frame is passed to the YOLOv9c model for vehicle tracking, which identifies all vehicles in the frame and assigns each a unique ID and coordinates.
-- **Plate Association**: These IDs allow us to link each vehicle to its corresponding detected license plate string.
-
-### Plate Detection
-- **Cropping for Plate Detection**: The frame is recursively cropped to focus on each vehicle, which is then processed by the plate area detection model.
-- **OCR Processing**: Each detected plate area is further cropped and analyzed using EasyOCR's english_g2 model to recognize alphanumeric characters.
-
-### Confidence and Tracking
-- **Confidence Threshold**: Vehicles are tracked only if the detected plate's OCR confidence score exceeds 50%.
-- **Target List**: If a vehicle's plate meets the confidence threshold, its ID is added to a target list.
-
-### Logging and Analysis
-- **Continuous Logging**: As subsequent frames are processed, movements of all detected vehicles and plates, along with a blank frame, are logged to facilitate the creation of a short video for the Analysis page.
-- **Temporal Redundancy Algorithm**: A temporal redundancy algorithm reviews all detected strings with a confidence score over 50%, voting for the most popular character in each position to improve accuracy.
-
-### Finalization
-- **Permanent Logging**: When a target vehicle is no longer detected in the frames, a permanent log is created. This log uses a universally unique identifier (UUID) and includes:
-  - The short video.
-  - Cropped images of the vehicle and the plate.
-  - The consensus plate string from the temporal redundancy algorithm.
-  - The date and time of the detection.
-  
-### System Monitoring
-- Throughout the process, the application continuously monitors and displays CPU and RAM usage, alongside real-time visualizations of the detected vehicles, plates, strings, and target IDs on the current frame.
+![ALPR System Diagram](<ALPR-system.drawio.png>)
 
 ## Plans for further development
 This application originated as my high school senior project. While the project served as a significant learning experience over the past year, I am currently uncertain about my ability to continue its development in the foreseeable future. However, I encourage anyone interested to build upon and expand this project. I am eager to see the innovative ways in which it can be enhanced and applied by others in the community!

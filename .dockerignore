@@ -20,6 +20,7 @@ get-reqs/
 .git/
 .gitignore
 README.md
+ALPR-system.drawio.png
 venv-run.sh
 
 Dockerfile
