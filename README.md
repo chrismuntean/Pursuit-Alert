@@ -46,6 +46,14 @@ I'm slacking on these give me a bit
 ## Plans for further development
 This application originated as my high school senior project. While the project served as a significant learning experience over the past year, I am currently uncertain about my ability to continue its development in the foreseeable future. However, I encourage anyone interested to build upon and expand this project. I am eager to see the innovative ways in which it can be enhanced and applied by others in the community!
 
+## Development Notebook
+Throughout my high school senior project, I was required to maintain detailed daily logs that documented my learning and development progress. These logs include insights into my thought processes and the challenges I encountered while working on this project.
+
+If you are interested in exploring these entries and witnessing the evolution of the project firsthand, you can access my Notion calendar containing all the notes. However, please be aware that this link may no longer be active at the time you try to access it. After my graduation, my high school will deactivate my school Google account, which could result in the deletion of these records.
+
+You can attempt to access the development logs here: [Muntean Chris's Development Logs](https://sparktechsolutions.notion.site/Muntean-Chris-40f87992478c47c99e366a3a97577a01)
+
+
 ## Acknowledgments
 This project was built using several open-source technologies and libraries. Special thanks to the teams behind each of these tools for making them available:
 ```
