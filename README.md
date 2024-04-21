@@ -3,7 +3,9 @@
 
 ## Installation
 First grab my repo
-`git clone https://github.com/chrismuntean/Pursuit-Alert.git`
+```bash
+git clone https://github.com/chrismuntean/Pursuit-Alert.git
+```
 
 ### Python virtual environment installation
 ```bash
@@ -16,8 +18,12 @@ chmod +x venv-run.sh
 **IMPORTANT**: Please ensure that all requirements are fully installed before interrupting the installation process. If the installation does not complete successfully, you may need to remove the `pursuit-alert-venv` directory and execute `./venv-run.sh` again to reinstall the requirements.
 
 ### Docker installation
-1. `docker pull chrismuntean/pursuit-alert`
-2. `docker compose up`
+```bash
+docker pull chrismuntean/pursuit-alert
+```
+```bash
+docker compose up
+```
 
 ## Features
 ### Current version: `v0.1.0-beta`
@@ -55,7 +61,7 @@ Throughout my high school senior project, I was required to maintain detailed da
 
 If you are interested in exploring these entries and witnessing the evolution of the project firsthand, you can access my Notion calendar containing all the notes. However, please be aware that this link may no longer be active at the time you try to access it. After my graduation, my high school will deactivate my school Google account, which could result in the deletion of these records.
 
-Attempt to access development logs here: [Chris Muntean's dev logs](https://sparktechsolutions.notion.site/Muntean-Chris-40f87992478c47c99e366a3a97577a01) (see September 2023 - April 2024)
+Attempt to access development logs here: [Chris Muntean's dev logs](https://sparktechsolutions.notion.site/Muntean-Chris-40f87992478c47c99e366a3a97577a01) (*see September 2023 - April 2024*)
 
 ## Acknowledgments
 This project was built using several open-source technologies and libraries. Special thanks to the teams behind each of these tools for making them available:
