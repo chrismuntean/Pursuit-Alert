@@ -51,7 +51,7 @@ This software is optimized for deployment on a standalone system within a vehicl
 
 The system is compatible with compact hardware setups such as a Raspberry Pi or an Nvidia Jetson Nano. It supports the addition of a small screen, enabling you to view real-time analysis of license plates detected on vehicles behind you.
 
-## Screenshots
+## Demonstration
 I'm slacking on these give me a bit
 
 ## How the ALPR works
