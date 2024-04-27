@@ -57,8 +57,11 @@ def classify_resolution(width, height):
 st.header('General Settings', divider = 'gray')
 st.write('### Select input source:')
 
+# Force video file upload and disable the toggle button for the cloud deployment
+st.session_state['cam_or_vid'] = True
+
 # allow the user to select a webcam or video file and update the session state
-cam_or_vid = st.toggle('Upload video instead', value=st.session_state['cam_or_vid'])
+cam_or_vid = st.toggle('Upload video instead', value=st.session_state['cam_or_vid'], disabled=True)
 st.session_state['cam_or_vid'] = cam_or_vid
 
 st.divider()
