@@ -2,10 +2,9 @@
 ### Counter surveillance system that detects vehicles that may be following you using ALPR. Designed simply with open source projects.
 <div align="center">
 
-  ![Docker Pulls](https://img.shields.io/docker/pulls/chrismuntean/pursuit-alert.svg)
   ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/chrismuntean/pursuit-alert)
-  ![GitHub Release Date](https://img.shields.io/github/release-date/chrismuntean/pursuit-alert)
   ![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4%EF%B8%8F-blue)
+  ![GitHub Release Date](https://img.shields.io/github/release-date/chrismuntean/pursuit-alert)
 
 </div>
 
@@ -26,6 +25,8 @@ chmod +x venv-run.sh
 **IMPORTANT**: Ensure that all requirements are fully installed before interrupting the installation process. If the installation does not complete successfully, you may need to remove the `pursuit-alert-venv` directory and execute `./venv-run.sh` again to reinstall the requirements.
 
 ### Docker installation
+![Docker Pulls](https://img.shields.io/docker/pulls/chrismuntean/pursuit-alert.svg)
+
 ```bash
 docker pull chrismuntean/pursuit-alert
 ```
