@@ -9,7 +9,7 @@
 </div>
 
 ## Installation
-First grab my repo
+Begin by cloning the repository to your local machine:
 ```bash
 git clone https://github.com/chrismuntean/Pursuit-Alert.git
 ```
@@ -46,7 +46,7 @@ docker compose up
 - **Analysis Tools**:
   - Displays vehicle details such as plate number, sighting count, first and last sighting dates, and a calculated risk score.
   - Risk score calculation is based on the mean, median, and mode of total sightings across all observed plates.
-  - Media logs for each vehicle can be accessed by selecting a plate on the Analysis page, featuring dropdowns for each sighting date and time, along with a cropped image of the vehicle and plate, and a video highlighting the vehicle in red labeled as "TARGET".
+  - Media logs for each vehicle can be accessed by selecting a plate on the Analysis page, featuring dropdowns for each sighting date and time, along with a cropped image of the vehicle and plate, and a video highlighting the vehicle in red labeled as "Target Vehicle".
 - **Data Management**: Offers an option to clear all logs on the Analysis page for privacy and system performance.
 
 ### Technical Specifications
