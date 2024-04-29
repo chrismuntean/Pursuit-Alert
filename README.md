@@ -74,7 +74,7 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
 ## Live Demonstration
 Experience the capabilities of Pursuit-Alert firsthand by visiting the interactive live demo. Feel free to upload your own video to see how Pursuit-Alert performs in real-world scenarios.
 
-<div align="center>
+<div align="center">
 
   ### ![Visit the Pursuit Alert live demo](https://pursuit-alert-demo.streamlit.app) and test it with you own videos!
 
