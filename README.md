@@ -67,7 +67,7 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
 ![ALPR demo output](readme-media/demo-output.gif)
 ### Frame skip set at 10
 | Input  | Output |
-|--------|--------|
+|--------|--------|   See a live demo of Pursuit-Alert over at https://pursuit-alert-demo.streamlit.app
 | 4k     | 1080p  |
 | 30 FPS | 3 FPS  |
 
