@@ -1,7 +1,7 @@
 <div align="center">
 
   # Pursuit Alert
-  ### Counter surveillance system that detects vehicles that may be following you using ALPR. Designed simply with open source projects.
+  ### Counter surveillance system that detects vehicles that may be following you by using automatic license plate recognition (ALPR). Designed simply with open source projects.
   ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/chrismuntean/pursuit-alert)
   ![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4%EF%B8%8F-blue)
   ![GitHub Release Date](https://img.shields.io/github/release-date/chrismuntean/pursuit-alert)
@@ -27,7 +27,7 @@ chmod +x venv-run.sh
 ### Docker installation
 ![Docker Pulls](https://img.shields.io/docker/pulls/chrismuntean/pursuit-alert.svg)
 
-The Docker image is compatible with both amd64 and arm64 architectures, enabling deployment on standalone systems such as a Raspberry Pi or Jetson Nano.
+The Docker image is compatible with both `amd64` and `arm64` architectures, enabling deployment on standalone systems such as a Raspberry Pi or Jetson Nano.
 
 For more details on the Docker image, visit the [Pursuit-Alert Docker Hub page](https://hub.docker.com/r/chrismuntean/pursuit-alert).
 
@@ -63,15 +63,18 @@ This software is optimized for deployment on a standalone system within a vehicl
 
 The system is compatible with compact hardware setups such as a Raspberry Pi or an Nvidia Jetson Nano. It supports the addition of a small screen, enabling you to view real-time analysis of license plates detected on vehicles behind you.
 
-## Demonstration
+## ALPR Demonstration
 ![ALPR demo output](readme-media/demo-output.gif)
-**Frame skip set at 10**
+### Frame skip set at 10
 | Input  | Output |
 |--------|--------|
 | 4k     | 1080p  |
 | 30 FPS | 3 FPS  |
 
-### See a live demo of Pursuit-Alert over at https://pursuit-alert-demo.streamlit.app
+## Live Demonstration
+Experience the capabilities of Pursuit-Alert firsthand by visiting the interactive live demo. Feel free to upload your own video to see how Pursuit-Alert performs in real-world scenarios.
+
+### ![Visit the Pursuit Alert live demo](https://pursuit-alert-demo.streamlit.app) and test it with you own videos!
 
 ## How the ALPR works
 This section presents a diagram that outlines the core functionalities of the automatic license plate recognition (ALPR) components within the system. It details the operational flow, configuration settings, tolerances, and logging procedures involved in the ALPR process.
