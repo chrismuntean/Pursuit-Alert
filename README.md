@@ -71,6 +71,7 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
 | 4k     | 1080p  |
 | 30 FPS | 3 FPS  |
 
+
 ## Live Demonstration
 Experience the capabilities of Pursuit-Alert firsthand by visiting the interactive live demo. Feel free to upload your own video to see how Pursuit-Alert performs in real-world scenarios.
 
