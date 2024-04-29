@@ -64,12 +64,32 @@ This software is optimized for deployment on a standalone system within a vehicl
 The system is compatible with compact hardware setups such as a Raspberry Pi or an Nvidia Jetson Nano. It supports the addition of a small screen, enabling you to view real-time analysis of license plates detected on vehicles behind you.
 
 ## ALPR Demonstration
-![ALPR demo output](readme-media/demo-output.gif)
-### Frame skip set at 10
-| Input  | Output |
-|--------|--------|
-| 4k     | 1080p  |
-| 30 FPS | 3 FPS  |
+<table>
+  <tr>
+    <!-- This cell holds the GIF -->
+    <td valign="top"><img src="readme-media/demo-output.gif" alt="ALPR demo output"></td>
+
+    <!-- This cell holds the header and table -->
+    <td valign="top">
+      <h3>Frame skip set at 10</h3>
+      <table>
+        <tr>
+          <th>Input</th>
+          <th>Output</th>
+        </tr>
+        <tr>
+          <td>4k</td>
+          <td>1080p</td>
+        </tr>
+        <tr>
+          <td>30 FPS</td>
+          <td>3 FPS</td>
+        </tr>
+      </table>
+    </td>
+
+  </tr>
+</table>
 
 ## Live Demonstration
 Experience the capabilities of Pursuit-Alert firsthand by visiting the interactive live demo. Feel free to upload your own video to see how Pursuit-Alert performs in real-world scenarios.
