@@ -143,4 +143,4 @@ docker buildx build --platform linux/amd64,linux/arm64 -t chrismuntean/pursuit-a
 ```
 This builds for arm64 and amd64 (x86_64) and pushes to Docker Hub under the same version tag *and on latest*
 
-**Note:** this requires buildx and the build kit to be pulled and running
+**Note:** *this requires buildx and the build kit to be pulled and running*
