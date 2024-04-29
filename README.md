@@ -141,6 +141,6 @@ To build multi-architecture images and push them all with the same version tag u
 ```bash
 docker buildx build --platform linux/amd64,linux/arm64 -t chrismuntean/pursuit-alert:v0.1.0-beta -t chrismuntean/pursuit-alert:latest --push .
 ```
-This builds for arm64 and amd64 (x86_64) and pushes to Docker Hub under the same version tag *and on latest*
+This builds for `amd64` (`x86_64`) and `arm64` then pushes to Docker Hub under the same version tag *and on latest*
 
 **Note:** *this requires buildx and the build kit to be pulled and running*
