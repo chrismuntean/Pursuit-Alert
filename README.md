@@ -64,7 +64,7 @@ This software is optimized for deployment on a standalone system within a vehicl
 The system is compatible with compact hardware setups such as a Raspberry Pi or an Nvidia Jetson Nano. It supports the addition of a small screen, enabling you to view real-time analysis of license plates detected on vehicles behind you.
 
 ## Demonstration
-I'm slacking on these give me a bit
+[![ALPR demonstration video]](readme-media/demo-output.mp4 "Wath the ALPR demonstration video")
 
 ## How the ALPR works
 This section presents a diagram that outlines the core functionalities of the automatic license plate recognition (ALPR) components within the system. It details the operational flow, configuration settings, tolerances, and logging procedures involved in the ALPR process.
