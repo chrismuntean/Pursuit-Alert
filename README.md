@@ -68,7 +68,6 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
   <tr>
     <!-- This cell holds the GIF -->
     <td valign="top"><img src="readme-media/demo-output.gif" alt="ALPR demo output"></td>
-
     <!-- This cell holds the header and table -->
     <td valign="top">
       <h3>Frame skip set at 10</h3>
@@ -87,7 +86,6 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
         </tr>
       </table>
     </td>
-
   </tr>
 </table>
 
