@@ -19,8 +19,6 @@ get-reqs/
 # UNNESSECARY FILES FOR DOCKER BUILD
 .git/
 .gitignore
-README.md
-ALPR-system.drawio.png
 venv-run.sh
 
 Dockerfile
