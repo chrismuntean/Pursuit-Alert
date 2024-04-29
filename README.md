@@ -1,7 +1,7 @@
 <div align="center">
 
   # Pursuit Alert | [Live Demo](https://pursuit-alert-demo.streamlit.app/) | [Docker Hub](https://hub.docker.com/r/chrismuntean/pursuit-alert)
-  ### Counter surveillance system that detects vehicles that may be following you by using automatic license plate recognition (ALPR). Designed simply with open source projects.
+  ### Counter surveillance system that detects vehicles that may be following you by using automatic license plate recognition (ALPR). Designed simply with open-source projects.
   ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/chrismuntean/pursuit-alert)
   ![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4%EF%B8%8F-blue)
   ![GitHub Release Date](https://img.shields.io/github/release-date/chrismuntean/pursuit-alert)
@@ -90,11 +90,11 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
 </table>
 
 ## Live Demonstration
-Experience the capabilities of Pursuit-Alert firsthand by visiting the interactive live demo. Feel free to upload your own video to see how Pursuit-Alert performs in real-world scenarios.
+Experience the capabilities of Pursuit-Alert firsthand by visiting the interactive live demo. Feel free to upload your video to see how Pursuit-Alert performs in real-world scenarios.
 
 <div align="center">
 
-  ### ![Visit the Pursuit Alert live demo](https://pursuit-alert-demo.streamlit.app) and test it with you own videos!
+  ### ![Visit the Pursuit Alert live demo](https://pursuit-alert-demo.streamlit.app) and test it with your own videos!
 
 </div>
 
@@ -159,6 +159,6 @@ To build multi-architecture images and push them all with the same version tag u
 ```bash
 docker buildx build --platform linux/amd64,linux/arm64 -t chrismuntean/pursuit-alert:v0.1.0-beta -t chrismuntean/pursuit-alert:latest --push .
 ```
-This builds for `amd64` (`x86_64`) and `arm64` then pushes to Docker Hub under the same version tag *and on latest*
+This builds for `amd64` (`x86_64`) and `arm64` and then pushes to Docker Hub under the same version tag *and on latest*
 
 **Note:** *this requires buildx and the build kit to be pulled and running*
