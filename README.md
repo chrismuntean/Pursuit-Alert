@@ -1,6 +1,6 @@
 <div align="center">
 
-  # Pursuit Alert | ![Live Demo](https://pursuit-alert-demo.streamlit.app/) | ![Docker Hub](https://hub.docker.com/r/chrismuntean/pursuit-alert)
+  # Pursuit Alert | [Live Demo](https://pursuit-alert-demo.streamlit.app/) | [Docker Hub](https://hub.docker.com/r/chrismuntean/pursuit-alert)
   ### Counter surveillance system that detects vehicles that may be following you by using automatic license plate recognition (ALPR). Designed simply with open source projects.
   ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/chrismuntean/pursuit-alert)
   ![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4%EF%B8%8F-blue)
