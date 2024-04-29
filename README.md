@@ -71,11 +71,14 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
 | 4k     | 1080p  |
 | 30 FPS | 3 FPS  |
 
-
 ## Live Demonstration
 Experience the capabilities of Pursuit-Alert firsthand by visiting the interactive live demo. Feel free to upload your own video to see how Pursuit-Alert performs in real-world scenarios.
 
-### ![Visit the Pursuit Alert live demo](https://pursuit-alert-demo.streamlit.app) and test it with you own videos!
+<div align="center>
+
+  ### ![Visit the Pursuit Alert live demo](https://pursuit-alert-demo.streamlit.app) and test it with you own videos!
+
+</div>
 
 ## How the ALPR works
 This section presents a diagram that outlines the core functionalities of the automatic license plate recognition (ALPR) components within the system. It details the operational flow, configuration settings, tolerances, and logging procedures involved in the ALPR process.
