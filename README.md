@@ -55,7 +55,7 @@ docker compose up
 
 ### Technical Specifications
 - **Vehicle Detection**: Utilizes [Ultralytics YOLOv9c](https://docs.ultralytics.com/models/yolov9/), a state-of-the-art model for accurate vehicle detection.
-- **Plate Area Detection**: Employs the [License Plate Recognition LHQOW Dataset](https://universe.roboflow.com/objects-in-the-wild/license-plate-recognition-lhqow) to locate license plates within the vehicle area detection. Pretrained on YOLOv8n using Ultralytics. See model metrics [here](https://hub.ultralytics.com/models/ljPX6IZZrziN1kPva2Qn)
+- **Plate Area Detection**: Employs the [License Plate Recognition LHQOW Dataset](https://universe.roboflow.com/objects-in-the-wild/license-plate-recognition-lhqow) to locate license plates within the vehicle area detection. Pretrained on YOLOv8n using Ultralytics. See model metrics [here](https://hub.ultralytics.com/models/ljPX6IZZrziN1kPva2Qn).
 - **Alphanumeric Recognition**: Implements [EasyOCR english_g2](https://github.com/JaidedAI/EasyOCR) for extracting alphanumeric characters from license plates, enabling accurate plate string detection.
 
 ## Usage
@@ -133,3 +133,14 @@ This project was built using several open-source technologies and libraries. Spe
 }
 ```
 I am grateful to all the developers and contributors of these projects.
+
+## Development reference guide
+
+### Docker building
+To build multi-architecture images and push them all with the same version tag use this command:
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -t chrismuntean/pursuit-alert:v0.1.0-beta -t chrismuntean/pursuit-alert:latest --push .
+```
+This builds for arm64 and amd64 (x86_64) and pushes to Docker Hub under the same version tag *and on latest*
+
+**Note:** this requires buildx and the build kit to be pulled and running
