@@ -119,6 +119,3 @@ This project was built using several open-source technologies and libraries. Spe
 }
 ```
 I am grateful to all the developers and contributors of these projects.
-
-## License
-Do whatever you want with my code. I don't care
