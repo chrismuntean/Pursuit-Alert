@@ -24,7 +24,11 @@ chmod +x venv-run.sh
 
 **IMPORTANT**: Ensure that all requirements are fully installed before interrupting the installation process. If the installation does not complete successfully, you may need to remove the `pursuit-alert-venv` directory and execute `./venv-run.sh` again to reinstall the requirements.
 
-### Docker installation ![Docker Pulls](https://img.shields.io/docker/pulls/chrismuntean/pursuit-alert.svg)
+### Docker installation
+![Docker Pulls](https://img.shields.io/docker/pulls/chrismuntean/pursuit-alert.svg)
+
+The Docker image is compatible with both amd64 and arm64 architectures, enabling deployment on standalone systems such as a Raspberry Pi or Jetson Nano.
+
 For more details on the Docker image, visit the [Pursuit-Alert Docker Hub page](https://hub.docker.com/r/chrismuntean/pursuit-alert).
 
 ```bash
