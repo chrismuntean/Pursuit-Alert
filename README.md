@@ -65,11 +65,13 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
 
 ## Demonstration
 ![ALPR demo output](readme-media/demo-output.gif)
-### Frame skip set at 10
+**Frame skip set at 10**
 | Input  | Output |
-|--------|--------|   See a live demo of Pursuit-Alert over at https://pursuit-alert-demo.streamlit.app
+|--------|--------|
 | 4k     | 1080p  |
 | 30 FPS | 3 FPS  |
+
+### See a live demo of Pursuit-Alert over at https://pursuit-alert-demo.streamlit.app
 
 ## How the ALPR works
 This section presents a diagram that outlines the core functionalities of the automatic license plate recognition (ALPR) components within the system. It details the operational flow, configuration settings, tolerances, and logging procedures involved in the ALPR process.
