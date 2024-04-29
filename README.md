@@ -55,7 +55,7 @@ docker compose up
 
 ### Technical Specifications
 - **Vehicle Detection**: Utilizes [Ultralytics YOLOv9c](https://docs.ultralytics.com/models/yolov9/), a state-of-the-art model for accurate vehicle detection.
-- **Plate Area Detection**: Employs the [License Plate Recognition LHQOW Dataset](https://universe.roboflow.com/objects-in-the-wild/license-plate-recognition-lhqow) to locate license plates within the video frames.
+- **Plate Area Detection**: Employs the [License Plate Recognition LHQOW Dataset](https://universe.roboflow.com/objects-in-the-wild/license-plate-recognition-lhqow) to locate license plates within the video frames. Pretrained on YOLOv8n using Ultralytics. See model metrics [here](https://hub.ultralytics.com/models/ljPX6IZZrziN1kPva2Qn)
 - **Plate Recognition**: Implements [EasyOCR english_g2](https://github.com/JaidedAI/EasyOCR) for extracting alphanumeric characters from license plates, enabling accurate plate string detection.
 
 ## Usage
