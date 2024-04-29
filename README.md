@@ -67,10 +67,10 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
 <table>
   <tr>
     <!-- This cell holds the GIF -->
-    <td valign="top"><img src="readme-media/demo-output.gif" alt="ALPR demo output"></td>
+    <td valign="middle"><img src="readme-media/demo-output.gif" alt="ALPR demo output"></td>
     <!-- This cell holds the header and table -->
     <td valign="top">
-      <h3>Frame skip set at 10</h3>
+      <h3>Frame skip = 10</h3>
       <table>
         <tr>
           <th>Input</th>
