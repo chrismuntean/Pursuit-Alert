@@ -94,7 +94,7 @@ Experience the capabilities of Pursuit-Alert firsthand by visiting the interacti
 
 <div align="center">
 
-  ### ![Visit the Pursuit Alert live demo](https://pursuit-alert-demo.streamlit.app) and test it with your own videos!
+  ### [Visit the Pursuit Alert live demo](https://pursuit-alert-demo.streamlit.app) and test it with your own videos!
 
 </div>
 
