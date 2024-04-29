@@ -65,6 +65,11 @@ The system is compatible with compact hardware setups such as a Raspberry Pi or 
 
 ## Demonstration
 ![ALPR demo output](readme-media/demo-output.gif)
+### Frame skip set at 10
+| Input  | Output |
+|--------|--------|
+| 4k     | 1080p  |
+| 30 FPS | 3 FPS  |
 
 ## How the ALPR works
 This section presents a diagram that outlines the core functionalities of the automatic license plate recognition (ALPR) components within the system. It details the operational flow, configuration settings, tolerances, and logging procedures involved in the ALPR process.
