@@ -1,20 +1,13 @@
-version: '3.8'
-
 services:
   pursuit-alert:
-    # UNCOMMENT BELOW TO BUILD YOUR OWN IMAGE WITH "docker compose up --build"
-    #build:
-    #  context: .
-    #  dockerfile: Dockerfile
-    #  platforms:
-    #    - linux/amd64
-    #    - linux/arm64
-    image: chrismuntean/pursuit-alert:latest # Tag specification
-    privileged: true # Required for USB acces for video stream
+    image: chrismuntean/pursuit-alert:latest
+    privileged: true
     ports:
       - "8501:8501"
     volumes:
-      - logs:/usr/src/app/logs # Mounting persistent logs volume
+      - logs:/usr/src/app/logs
+      - ./Pursuit_Alert.py:/usr/src/app/Pursuit_Alert.py
+      - ./pages/Settings.py:/usr/src/app/pages/Settings.py
 
 volumes:
-  logs: # Named volume for plate logs
+  logs:

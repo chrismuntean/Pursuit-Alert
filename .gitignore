@@ -14,4 +14,4 @@ pip_tmp/
 pursuit-alert-venv/
 
 # Ignore the get-reqs venv directory (for getting the requirements)
-get-reqs/
+get-reqs/.DS_Store
