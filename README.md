@@ -162,3 +162,6 @@ docker buildx build --platform linux/amd64,linux/arm64 -t chrismuntean/pursuit-a
 This builds for `amd64` (`x86_64`) and `arm64` and then pushes to Docker Hub under the same version tag *and on latest*
 
 **Note:** *this requires buildx and the build kit to be pulled and running*
+## Changelog
+
+- 2026-07-19 — Added RTSP stream support as a source.

@@ -603,42 +603,44 @@ display_resources(ALPR_status)
 #########################
 
 # get the stream_path from the session state variables
-if 'cam_or_vid' not in st.session_state:
-    st.session_state.cam_or_vid = False
+if 'source_type' not in st.session_state:
+    st.session_state['source_type'] = "USB Camera"
 
-# if selected webcam
-if st.session_state['cam_or_vid'] == False:
+source_type = st.session_state['source_type']
+stream_path = None
 
-    # check if the webcam index is not in the session state or if it is NULL
-    if 'cam_index' not in st.session_state or st.session_state['cam_index'] == None:
-
+if source_type == "USB Camera":
+    if (
+        'cam_index' not in st.session_state
+        or st.session_state['cam_index'] is None
+    ):
         with ALPR_status as status:
-            # display an error
-            status.update(label = "ALPR inactive", state = "error")
+            status.update(label="ALPR inactive", state="error")
             st.error("Please select a camera index in settings")
-            stream_path = None
-
-    # if the webcam index is in the session state and is not NULL
     else:
-        # set the stream_path to the webcam index
         stream_path = st.session_state['cam_index']
 
-# if selected video file
-else:
-
-    # check if the video file path is not in the session state or if it is NULL
-    if 'file_path' not in st.session_state or st.session_state['file_path'] == None:
-
+elif source_type == "Video File":
+    if (
+        'file_path' not in st.session_state
+        or st.session_state['file_path'] is None
+    ):
         with ALPR_status as status:
-            # display an error
-            status.update(label = "ALPR inactive", state = "error")
+            status.update(label="ALPR inactive", state="error")
             st.error("Please upload a video file in settings")
-            stream_path = None
-
-    # if the video file path is in the session state and is not NULL
     else:
-        # set the stream_path to the video file path
         stream_path = st.session_state['file_path']
+
+elif source_type == "RTSP Camera":
+    if (
+        'rtsp_url' not in st.session_state
+        or not st.session_state['rtsp_url']
+    ):
+        with ALPR_status as status:
+            status.update(label="ALPR inactive", state="error")
+            st.error("Please enter an RTSP stream address in settings")
+    else:
+        stream_path = st.session_state['rtsp_url']
 
 # get the frame_skip from the session state variables
 # displaying the error message is redundanct because it's default value is set in the settings
@@ -657,7 +659,7 @@ elif 'frame_skip' in st.session_state:
 #^# SETTINGS HANDLING #^#
 #########################
 
-st.sidebar.code("stream_path: ", str(stream_path)) # FOR DEVELOPMENT ONLY
+st.sidebar.code(f"stream_path: {stream_path}") # FOR DEVELOPMENT ONLY
 
 # write the session state variables to the sidebar (navbar) for development
 st.sidebar.write('### Session state variables') # FOR DEVELOPMENT ONLY
